@@ -69,3 +69,11 @@ workflow lint.r-local-dependencies    install dependencies required for running 
 workflow lint.r-local                 run R linter locally
 workflow lint.r-docker                run R linter in Docker container
 ```
+
+# Shiny pattern
+
+Project files for Shiny app.
+
+## Usage
+
+Define your custom tasks in `src/tasks.py`
