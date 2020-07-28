@@ -1,0 +1,3 @@
+rstudio_image: appsilon/project # __todo__ change image name
+rstudio_tag: '1.0'
+rstudio_container_name: project # __todo__ change container name to avoid conflicts with docker run

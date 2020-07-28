@@ -1,0 +1,11 @@
+version: '3.4'
+services:
+  rstudio:
+    image: "${rstudio_image}:${rstudio_tag}"
+    container_name: ${rstudio_container_name}
+    ports:
+    - "8787:8787"
+    volumes:
+    - "./:/mnt"
+    environment:
+    - DISABLE_AUTH=true
