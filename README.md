@@ -49,3 +49,23 @@ There are 2 ways of updating your image with R packages. One is quick, using `./
 
 1. Push your image to the registry: `./workflow rstudio.push`
 1. Commit your changes in git
+
+# Lint
+
+This pattern provides you with tools to lint your code. It provides linter scripts (check next section for available languages) and tasks to use them locally or inside a container. Scripts also can be included in your CI solution.
+
+## Supported languages
+
+* R
+
+## Usage
+
+### R
+
+Linter for R can be run locally or inside a Docker container. The latter option requires pattern `rstudio` and a running project container. Running R linter locally requires `lintr` and `optparse` packages. To install them run `workflow lint.r-local-dependencies`.
+
+```{shell}
+workflow lint.r-local-dependencies    install dependencies required for running R linter locally
+workflow lint.r-local                 run R linter locally
+workflow lint.r-docker                run R linter in Docker container
+```
