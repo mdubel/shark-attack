@@ -1,3 +1,46 @@
+# Appsilon Project Patterns
+
+**Code of Work**
+ - single feature / tool / solution is called `pattern`
+ - each pattern is a separate branch, that is possible to add to new project using `./workflow add --pattern={pattern}`
+ - you can start developing new pattern by forking `new-pattern` branch
+ - update the README for each pattern implemented with the steps/files needed to use it, like field to be set/modified etc.
+ - mark those parts clearly in the code with `_todo_` comment
+
+## Usage
+
+Workflow task management based on [pyinvoke](https://www.pyinvoke.org/).
+Main `workflow` script scans for `tasks.py` files in the project structure to register new tasks.
+If you run workflow for the very first time, just run `./workflow` and press [enter].
+It will install required dependencies like pyinvoke.
+
+Run `./workflow --list` to see available tasks.
+
+```
+./workflow init   Initialize workflow in a recently cloned project repo. It will add patterns remote.
+./workflow add    Add pattern to your project.
+./workflow ls     List all available patterns.
+```
+
+#### Create new project from template repository
+
+To start new project click **Use this template** in the `Appsilon/project.pattern` github repository.
+You don't have to include all branches, only `master` branch is needed.
+How to use template repositories: https://github.blog/2019-06-06-generate-new-repositories-with-repository-templates/
+
+#### Initialize workflow
+
+To add patterns to your new project repository, you have to run `./workflow init`.
+It adds `Appsilon/project.pattern` repository as additional remote to fetch pattern branches.
+
+#### Add patterns
+
+1. From branch `master` (on your newly created project repo!) run `./workflow add --pattern={pattern-branch-name}` to add pattern to your project. It fetches pattern branch to your repo.
+Note! when adding mature patterns it is enough to use it's name without prefix, e.g. `./workflow add --pattern=rstudio`. For other branches without `pattern/` prefix you need to use full name with `--explicit-branch` option, e.g. `./workflow add --pattern=experimental/rstudio --explicit-branch`.
+2. Fix conflicts and refactor pattern code according to its readme.
+3. Push pattern to the origin and open pull request and ask for code review.
+4. Decide how you want to merge pull request. For commercial projects it is recommended to squash pattern branch history.
+
 # RStudio pattern
 
 This pattern contains tasks and configuration to run RStudio in a docker container with all required dependencies.
