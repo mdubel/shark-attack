@@ -1,4 +1,4 @@
-function(input, output, session){
+function(input, output, session) {
   semanticPage(
     tags$head(
       # _todo_ load any additional files like this:
@@ -7,5 +7,5 @@ function(input, output, session){
     ),
     tags$h3("Hello"),
     home$ui("module_id")
-  )  
+  )
 }

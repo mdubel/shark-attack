@@ -24,11 +24,11 @@ server <- function(input, output, session, title) {
   ns <- session$ns
 
   counter <- reactiveVal(consts$global$counter_start_position)
-  
+
   observeEvent(input$count_me, {
     counter(add_one(counter()))
   })
-  
+
   output$counted <- renderUI({
     n_count <- counter()
     count_message(n_count)

@@ -56,25 +56,13 @@ opt <- parse_args(OptionParser(option_list = option_list))
 linters_config <- lintr::with_defaults(
   # Purposefully disabled linters:
   object_usage_linter = NULL, # Conflicts with standard usage of dplyr.
-  camel_case_linter = NULL, # Conflicts with Shiny functions which are camelCase
-  # Linters temporarily disabled - we should enable them and fix errors:
-  infix_spaces_linter = NULL,
-  single_quotes_linter = NULL,
-  spaces_left_parentheses_linter = NULL,
+  camel_case_linter = NULL, # Conflicts with Shiny functions which are camelCase.
+  commented_code_linter = NULL, # Commented code is useful in a template.
   # Enabled linters with custom arguments:
   open_curly_linter = lintr::open_curly_linter(allow_single_line = TRUE),
   closed_curly_linter = lintr::closed_curly_linter(allow_single_line = TRUE),
   line_length_linter = lintr::line_length_linter(140),
   object_length_linter = lintr::object_length_linter(40)
-  # Enabled linters with defaults (we leave them here for future reference):
-  # object_name_linter = NULL,
-  # absolute_paths_linter = NULL,
-  # assignment_linter = NULL,
-  # commas_linter = NULL,
-  # trailing_blank_lines_linter = NULL,
-  # trailing_whitespace_linter = NULL,
-  # spaces_inside_linter = NULL,
-  # no_tab_linter = NULL,
 )
 
 extract_error_type <- function(lint_error) {
