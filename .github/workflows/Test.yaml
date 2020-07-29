@@ -1,0 +1,24 @@
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+name: Test
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Start Docker
+        run: |
+          sudo pip3 install invoke==1.4.1
+          ./workflow rstudio.build --tag=1.0
+          ./workflow rstudio.start
+      - name: Run linter
+        run: ./workflow rstudio.lint
+      - name: Run unit tests
+        run: ./workflow rstudio.test
