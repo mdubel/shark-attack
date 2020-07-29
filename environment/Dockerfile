@@ -11,4 +11,4 @@ RUN mkdir -p /mnt/src && \
 
 # Install your project packages
 COPY src/renv.lock /tmp/renv.lock
-RUN cd /tmp && R -e 'renv::restore()'
+RUN Rscript -e 'renv::restore("/tmp")'
