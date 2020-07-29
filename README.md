@@ -64,9 +64,9 @@ Available tasks:
 ./workflow rstudio.push                  # Push created images to docker registry
 ./workflow rstudio.r                     # Execute R shell in the rstudio container
 ./workflow rstudio.bash                  # Execute shell in the rstudio container
-./workflow rstudio.lint                  # TODO: needs to be implemented
+./workflow rstudio.lint                  # Lint R sources with `lintr`
 ./workflow rstudio.styler                # TODO: needs to be implemented
-./workflow rstudio.test                  # TODO: needs to be implemented
+./workflow rstudio.test                  # Run unit tests with `testthat`
 ```
 
 #### Build your development docker image
