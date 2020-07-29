@@ -93,7 +93,7 @@ run_linter <- function(linters_config, ignore = TRUE, path = ".") {
   files_to_lint <- list.files(path = path, pattern = "\\.R$", recursive = TRUE, full.names = TRUE)
   if (ignore == TRUE) {
     read_safely <- purrr::safely(read.table)
-    lintignored <- unlist(read_safely(file = ".lintignore", as.is = T))$result
+    lintignored <- unlist(read_safely(file = ".lintignore", as.is = T))
     if (!is.null(lintignored)) {
       files_to_lint <- files_to_lint[!(files_to_lint %in% lintignored)]
     }
@@ -112,7 +112,7 @@ run_linter <- function(linters_config, ignore = TRUE, path = ".") {
   unlist(lapply(files_to_lint, lint_function), recursive = F)
 }
 
-lint_errors <- run_linter(linters_config, ignore = FALSE, path = opt$path)
+lint_errors <- run_linter(linters_config, ignore = TRUE, path = opt$path)
 error_type_counts <- count_error_types(lint_errors)
 
 cat("\nTotal errors:\n")
