@@ -1,3 +1,4 @@
+# Example R file, tested by `tests/testthat/test-fib.R`.
 fib <- function(n) {
   if (n <= 1) {
     return(n)

@@ -1,3 +1,5 @@
+# Example unit test file.
+# TODO: Find a better way to source the tested file - without relative path climbing.
 source("../../src/fib.R")
 context("Fibonacci sequence generation")
 
