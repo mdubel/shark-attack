@@ -13,10 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Start Docker
+      - name: Install dependencies
         run: |
           sudo pip3 install invoke==1.4.1  # Used by workflow
-          ./workflow rstudio.start
+      - name: Start Docker
+        run: ./workflow rstudio.start --no-browser
       - name: Run linter
         run: ./workflow rstudio.lint
       - name: Run unit tests

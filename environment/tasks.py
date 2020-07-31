@@ -49,10 +49,11 @@ def snapshot(c, tag=None):
 ns.add_task(snapshot)
 
 @task
-def start(c):
+def start(c, browser=True):
     """Run full development environment"""
     c.run("docker-compose up -d", env=config, echo = True)
-    c.run(f"{'open' if sys.platform == 'darwin' else 'xdg-open'} http://localhost:8787")
+    if browser:
+        c.run(f"{'open' if sys.platform == 'darwin' else 'xdg-open'} http://localhost:8787")
 ns.add_task(start)
 
 @task
