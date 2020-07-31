@@ -98,12 +98,11 @@ ns.add_task(prune)
 @task
 def lint(c):
     """Lint R sources"""
-    c.run("docker-compose exec -T rstudio Rscript '/mnt/lint/lint.R'", echo=True)
+    c.run("docker-compose exec -T rstudio /mnt/tests/lintr.R /mnt", echo=True)
 ns.add_task(lint)
 
 @task
 def test(c):
     """Run unit tests"""
-    # TODO: Run all the files in `tests/` instead of hardcoding a single unit test script.
-    c.run("docker-compose exec -T rstudio Rscript '/mnt/tests/testthat.R'", echo=True)
+    c.run("docker-compose exec -T rstudio /mnt/tests/testthat.R /mnt/tests/testthat", echo=True)
 ns.add_task(test)
