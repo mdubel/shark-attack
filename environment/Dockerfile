@@ -1,5 +1,5 @@
 # __todo__: Choose your base image
-FROM appsilon/rstudio:3.6.3_2
+FROM appsilon/rstudio:4.0.0_1
 
 # Set default project opened by RStudio
 RUN echo "/mnt/src/src.Rproj" > /home/rstudio/.rstudio/projects_settings/switch-to-project

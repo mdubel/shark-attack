@@ -16,3 +16,4 @@ sass(
 # load isolated modules
 # user_details <- use("modules/user_details.R")
 home <- use("modules/home.R")
+home$initialize(consts)

@@ -1,15 +1,10 @@
 # Shiny boilerplate
 
 This branch provides:
-* Workflow utility and a pull request template (merged from `master`)
-* Shiny app structure (merged from `pattern/shiny`)
-* RStudio in a Docker container (merged from `pattern/rstudio`)
+* Shiny app structure
+* RStudio in a Docker container (based on `appsilon/rstudio:4.0.0_x` image from https://github.com/Appsilon/docker images)
 * Linter (`lintr`) and unit tests (`testthat`) configuration
 * GitHub Actions configuration to lint and test the project
-
-# RStudio pattern
-
-This pattern contains tasks and configuration to run RStudio in a docker container with all required dependencies.
 
 ## Usage
 
