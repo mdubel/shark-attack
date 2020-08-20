@@ -1,6 +1,7 @@
 context("test home")
 
-setwd("/mnt/src/app")
+setwd("/mnt/src/app") # Modules require setting a working directory (there are relative paths used in modules code)
+
 consts <- config::get(file = "constants/constants.yml")
 home <- modules::use("modules/home.R")
 home$initialize(consts)

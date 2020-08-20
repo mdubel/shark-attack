@@ -8,5 +8,5 @@ if (length(args) == 0) {
 } else {
   stop("Expected at most 1 argument (directory with unit tests)")
 }
-
+print(path)
 testthat::test_dir(path)
