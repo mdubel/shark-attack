@@ -99,7 +99,7 @@ ns.add_task(prune)
 @task
 def styler(c):
     """Style R sources"""
-    c.run("docker-compose exec -T rstudio /mnt/tests/styler.R /mnt", echo=True)
+    c.run("docker-compose exec -T rstudio /mnt/tools/styler.R /mnt", echo=True)
 ns.add_task(styler)
 
 @task
