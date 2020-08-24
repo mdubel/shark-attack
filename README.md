@@ -24,6 +24,7 @@ workflow rstudio.ps                    # List running docker-compose services
 workflow rstudio.push                  # Push created images to docker registry
 workflow rstudio.r                     # Execute R shell in the rstudio container
 workflow rstudio.bash                  # Execute shell in the rstudio container
+workflow rstudio.bundlejs              # Bundles all `.js` files under `src/app/scripts` into a single file
 workflow rstudio.lint                  # Lint R sources with `lintr`
 workflow rstudio.styler                # Style all R files according to tidyverse styleguide with `styler`
 workflow rstudio.test                  # Run unit tests with `testthat`
