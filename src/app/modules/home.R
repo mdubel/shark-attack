@@ -2,11 +2,16 @@ import("htmltools")
 import("shiny")
 import("shiny.semantic")
 
-export("ui", "init_server")
+export("initialize", "ui", "init_server", "count_message")
 
 expose("utils/utils.R")
-# referenced to object that lives in the environment that calls module, global.R in this case.
-consts <- modules::use(consts)
+
+# Avoid referencing objects from global scope outside of a module.
+# Initialize local environment to reference objects explicitly.
+consts <- list()
+initialize <- function(consts) {
+  consts <<- consts
+}
 
 ui <- function(id) {
   ns <- NS(id)
