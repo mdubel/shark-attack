@@ -20,7 +20,8 @@ init_server <- function(user_id) {
 #'
 #' @return user email if passt
 server <- function(input, output, session, user_id) {
-  tryCatch({
+  tryCatch(
+    {
       suppressMessages(generate_token(Sys.getenv("AUTH0_CLIENT_ID"), Sys.getenv("AUTH0_CLIENT_SECRET")))
 
       # Store data in session userData
