@@ -14,10 +14,13 @@ setwd(path)
 system(paste0(
   "uglifyjs ",
   paste0(
-      list.files(path = "src/app/scripts",
+    list.files(
+      path = "src/app/scripts",
       recursive = TRUE,
       full.names = TRUE,
-      pattern = "\\.js$"),
-    collapse = " "),
-  " -o src/app/www/js/bundle.min.js")
-)
+      pattern = "\\.js$"
+    ),
+    collapse = " "
+  ),
+  " -o src/app/www/js/bundle.min.js"
+))
