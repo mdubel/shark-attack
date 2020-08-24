@@ -9,8 +9,6 @@ if (length(args) == 0) {
   stop("Expected at most 1 argument (directory to lint)")
 }
 
-# The exclusions parameter of `lint_dir` will only work properly if we first change to linted dir.
 setwd(path)
 
-# TODO: Lint only git-modified files to speed things up.
 styler::style_dir(".")

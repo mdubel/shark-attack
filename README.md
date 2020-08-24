@@ -25,7 +25,7 @@ workflow rstudio.push                  # Push created images to docker registry
 workflow rstudio.r                     # Execute R shell in the rstudio container
 workflow rstudio.bash                  # Execute shell in the rstudio container
 workflow rstudio.lint                  # Lint R sources with `lintr`
-workflow rstudio.styler                # TODO: needs to be implemented
+workflow rstudio.styler                # Style all R files according to tidyverse styleguide with `styler`
 workflow rstudio.test                  # Run unit tests with `testthat`
 ```
 
