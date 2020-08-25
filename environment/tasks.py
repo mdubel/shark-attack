@@ -103,6 +103,12 @@ def styler(c):
 ns.add_task(styler)
 
 @task
+def bundlejs(c):
+    """Bundle javascript dependencies"""
+    c.run("docker-compose exec -T rstudio /mnt/tools/js-bundler.R /mnt", echo=True)
+ns.add_task(bundlejs)
+
+@task
 def lint(c):
     """Lint R sources"""
     c.run("docker-compose exec -T rstudio /mnt/tests/lintr.R /mnt", echo=True)
