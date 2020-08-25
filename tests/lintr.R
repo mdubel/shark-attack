@@ -14,8 +14,8 @@ linters <- lintr::with_defaults(
   object_usage_linter = NULL, # Conflicts with standard usage of dplyr.
   camel_case_linter = NULL, # Conflicts with Shiny functions which are camelCase.
   commented_code_linter = NULL, # Commented code is useful in a template.
+  open_curly_linter = NULL,
   # Enabled linters with custom arguments:
-  open_curly_linter = lintr::open_curly_linter(allow_single_line = TRUE),
   closed_curly_linter = lintr::closed_curly_linter(allow_single_line = TRUE),
   line_length_linter = lintr::line_length_linter(140),
   object_length_linter = lintr::object_length_linter(40)

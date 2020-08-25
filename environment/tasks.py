@@ -97,6 +97,12 @@ def prune(c):
 ns.add_task(prune)
 
 @task
+def styler(c):
+    """Style R sources"""
+    c.run("docker-compose exec -T rstudio /mnt/tools/styler.R /mnt", echo=True)
+ns.add_task(styler)
+
+@task
 def lint(c):
     """Lint R sources"""
     c.run("docker-compose exec -T rstudio /mnt/tests/lintr.R /mnt", echo=True)
