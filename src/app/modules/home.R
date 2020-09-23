@@ -4,7 +4,7 @@ import("shiny.semantic")
 
 export("initialize", "ui", "init_server", "count_message")
 
-expose("utils/utils.R")
+utils <- use("utils/utils.R")
 
 # Avoid referencing objects from global scope outside of a module.
 # Initialize local environment to reference objects explicitly.
@@ -31,7 +31,7 @@ server <- function(input, output, session, title) {
   counter <- reactiveVal(consts$global$counter_start_position)
 
   observeEvent(input$count_me, {
-    counter(add_one(counter()))
+    counter(utils$add_one(counter()))
   })
 
   output$counted <- renderUI({
