@@ -1,5 +1,5 @@
 # __todo__: Choose your base image
-FROM appsilon/rstudio:4.0.0_1
+FROM appsilon/rstudio:4.0.3_1
 
 ENV NODE_VERSION=8.10.0
 RUN apt-get update && \
