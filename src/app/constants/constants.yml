@@ -1,0 +1,10 @@
+default:
+  global:
+    counter_start_position: 0
+  sass:
+    input: "styles/main.scss"
+    style: "compressed"
+    output: "www/css/sass.min.css"
+  texts:
+    button_label: "Click me"
+    clicked_info: "You clicked me %.0f times!"
