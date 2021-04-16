@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Appsilon Project Patterns
 
 Single feature / solution is called a *pattern*. Each pattern is a separate branch,
@@ -28,8 +29,3 @@ Note: "production ready" patterns have prefix `pattern/` and it is enough to use
 workflow add --pattern=rstudio
 ```
 
-For other branches you have to use full name with `--explicit-branch` option:
-
-```
-workflow add --pattern=experimental/rstudio --explicit-branch
-```
