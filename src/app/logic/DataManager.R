@@ -11,7 +11,7 @@ DataManager <- R6::R6Class(
   public = list(
     dataset = NULL,
     initialize = function() {
-      self$dataset <- read.csv("./app/data/GSAF5.csv")
+      self$dataset <- read.csv("./data/GSAF5.csv")
     }
   )
 )
