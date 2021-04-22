@@ -3,7 +3,8 @@ fluentPage(
     tags$link(rel = "stylesheet", type = "text/css", href = "css/sass.min.css")#,
     #tags$script(src = "js/bundle.min.js"),
   ),
-   withReact(
+  useShinyjs(),
+  withReact(
     map$ui("map")
   )
 )

@@ -1,10 +1,10 @@
 library(shiny)
 library(shiny.fluent)
 library(modules)
-library(echarts4r)
 library(config)
 library(sass)
-library(ggmap)
+library(shinyjs)
+library(glue)
 
 consts <- config::get(file = "constants/constants.yml")
 options(shiny.autoreload = TRUE)

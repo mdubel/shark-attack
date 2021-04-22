@@ -7,7 +7,10 @@ GridManager <- use("logic/GridManager.R")$GridManager
 
 ui <- function(id) {
   ns <- NS(id)
+  tagList(
+    actionButton(ns("ala"), "Click"),
   uiOutput(ns("grid"))
+  )
 }
 
 init_server <- function(id, dataset) {
@@ -17,10 +20,14 @@ init_server <- function(id, dataset) {
 server <- function(input, output, session, dataset) {
   ns <- session$ns
   
-  GridManager <- GridManager$new()
+  GridManager <- GridManager$new(10, 10)
   
   output$grid <- renderUI({
     GridManager$grid
+  })
+  
+  observeEvent(input$ala, {
+    GridManager$add_on_random_grid("contact.png")
   })
     
 }
