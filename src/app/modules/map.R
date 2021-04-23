@@ -4,6 +4,7 @@ export("ui", "init_server")
 
 utils <- use("utils/utils.R")
 GridManager <- use("logic/GridManager.R")$GridManager
+ObjectsManager <- use("logic/ObjectsManager.R")$ObjectsManager
 
 ui <- function(id) {
   ns <- NS(id)
@@ -22,12 +23,13 @@ server <- function(input, output, session, dataset) {
   
   GridManager <- GridManager$new(10, 10)
   
+  
   output$grid <- renderUI({
     GridManager$grid
   })
   
   observeEvent(input$ala, {
-    GridManager$add_on_random_grid("contact.png")
+    ObjectsManager <- ObjectsManager$new()
   })
     
 }

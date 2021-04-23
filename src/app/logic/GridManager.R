@@ -13,8 +13,6 @@ GridManager <- R6::R6Class(
     number_of_columns = NULL,
     number_of_rows = NULL,
     
-    object_location = NULL,
-    
     single_grid_element = function(id) {
       div(
         style = "border: 1px solid black;",
@@ -41,18 +39,14 @@ GridManager <- R6::R6Class(
         lapply(grid_elements_ids, private$single_grid_element)
       )
     }
-    
   ),
   public = list(
     grid = NULL,
-    add_on_random_grid = function(img_src) {
-      location <- private$prepare_grid_element_id(
-        sample(seq_len(private$number_of_rows), 1),
-        sample(seq_len(private$number_of_columns), 1)
+    random_grid_location = function(row_range, column_range) {
+      private$prepare_grid_element_id(
+        sample(row_range, 1),
+        sample(column_range, 1)
       )
-      
-      private$object_location <- location
-      shinyjs::runjs(glue("$('#{location}').css('background-image', 'url(./assets/{img_src})');"))
     },
     clean_grid = function(location) {
       shinyjs::runjs(glue("$('#{location}').css('background-image', 'none');"))
