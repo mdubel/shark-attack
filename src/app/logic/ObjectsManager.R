@@ -23,9 +23,9 @@ ObjectsManager <- R6::R6Class(
     get_move_vector = function(direction) {
       switch (
         direction,
-        top = c(0,-1),
+        up = c(0,-1),
         right = c(1,0),
-        bottom = c(0,1),
+        down = c(0,1),
         left = c(-1,0)
       )
     }
@@ -48,8 +48,7 @@ ObjectsManager <- R6::R6Class(
     },
     
     initialize = function() {
-      self$add_on_grid("diver", private$prepare_grid_element_id(1,1))
-      self$move_object("diver", "right")
+      
     }
   )
 )
