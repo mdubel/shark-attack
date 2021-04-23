@@ -34,7 +34,7 @@ ObjectsManager <- R6::R6Class(
     
     can_object_move = function(location, direction) {
       new_location <- private$get_new_location(location, direction)
-      if(any(new_location == 0) ) {
+      if(any(new_location == 0) || new_location[1] > private$number_of_columns || new_location[2] > private$number_of_rows) {
         return(FALSE)
       } else {
         return(TRUE)

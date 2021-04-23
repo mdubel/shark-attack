@@ -7,9 +7,6 @@ utils <- use("utils/utils.R")
 GridManager <- use("logic/GridManager.R")$GridManager
 ObjectsManager <- use("logic/ObjectsManager.R")$ObjectsManager
 
-NUMBER_OF_COLUMNS <- 10
-NUMBER_OF_ROWS <- 10
-
 ui <- function(id) {
   ns <- NS(id)
   tagList(
@@ -25,7 +22,7 @@ init_server <- function(id, dataset) {
 server <- function(input, output, session, dataset) {
   ns <- session$ns
   
-  GridManager <- GridManager$new(NUMBER_OF_COLUMNS, NUMBER_OF_ROWS)
+  GridManager <- GridManager$new()
   ObjectsManager <- ObjectsManager$new()
   
   output$grid <- renderUI({

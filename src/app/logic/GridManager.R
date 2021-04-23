@@ -10,8 +10,8 @@ export("GridManager")
 GridManager <- R6::R6Class(
   "GridManager",
   private = list(
-    number_of_columns = NULL,
-    number_of_rows = NULL,
+    number_of_columns = 10,
+    number_of_rows = 10,
     
     single_grid_element = function(id) {
       div(
@@ -54,9 +54,7 @@ GridManager <- R6::R6Class(
     clean_grid = function(location) {
       shinyjs::runjs(glue("$('#{location}').css('background-image', 'none');"))
     },
-    initialize = function(number_of_columns, number_of_rows) {
-      private$number_of_columns <- number_of_columns
-      private$number_of_rows <- number_of_rows
+    initialize = function() {
       self$grid <- private$create_grid()
     }
   )
