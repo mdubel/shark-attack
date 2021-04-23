@@ -1,4 +1,5 @@
 import("shiny")
+import("shinyjs")
 
 export("ui", "init_server")
 
@@ -21,15 +22,21 @@ init_server <- function(id, dataset) {
 server <- function(input, output, session, dataset) {
   ns <- session$ns
   
-  GridManager <- GridManager$new(10, 10)
-  
+  GridManager <- GridManager$new()
+  ObjectsManager <- ObjectsManager$new()
   
   output$grid <- renderUI({
     GridManager$grid
   })
   
   observeEvent(input$ala, {
-    ObjectsManager <- ObjectsManager$new()
+    ObjectsManager$add_on_grid("diver", "1-1")
+  })
+  
+  observeEvent(input$move_direction, {
+    req(input$move_direction != "clean")
+    ObjectsManager$move_object("diver", input$move_direction)
+    shinyjs::runjs("cleanKey();")
   })
     
 }

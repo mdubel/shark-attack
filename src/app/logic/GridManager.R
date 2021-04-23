@@ -10,8 +10,8 @@ export("GridManager")
 GridManager <- R6::R6Class(
   "GridManager",
   private = list(
-    number_of_columns = NULL,
-    number_of_rows = NULL,
+    number_of_columns = 10,
+    number_of_rows = 10,
     
     single_grid_element = function(id) {
       div(
@@ -20,14 +20,17 @@ GridManager <- R6::R6Class(
         id = id
       )
     },
-    prepare_grid_element_id = function(id_row, id_col) {
-      paste0(id_row, "-", id_col)
+    prepare_grid_element_id = function(id_col, id_row) {
+      paste0(id_col, "-", id_row)
+    },
+    get_grid_element_location = function(grid_id) {
+      strsplit(grid_id, "-") %>% unlist() %>% as.numeric()
     },
     create_grid = function() {
       grid_elements_ids <- expand.grid(
         x = seq_len(private$number_of_rows),
         y = seq_len(private$number_of_columns)
-      ) %>% {private$prepare_grid_element_id(id_row = .$x, id_col = .$y)}
+      ) %>% {private$prepare_grid_element_id(id_col = .$x, id_row = .$y)}
       
       div(
         style = sprintf(
@@ -51,9 +54,7 @@ GridManager <- R6::R6Class(
     clean_grid = function(location) {
       shinyjs::runjs(glue("$('#{location}').css('background-image', 'none');"))
     },
-    initialize = function(number_of_columns, number_of_rows) {
-      private$number_of_columns <- number_of_columns
-      private$number_of_rows <- number_of_rows
+    initialize = function() {
       self$grid <- private$create_grid()
     }
   )
