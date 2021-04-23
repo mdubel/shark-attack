@@ -20,6 +20,8 @@ ObjectsManager <- R6::R6Class(
     boat = NULL,
     plants = NULL,
     
+    grid_manager = NULL,
+    
     get_move_vector = function(direction) {
       switch (
         direction,
@@ -28,6 +30,19 @@ ObjectsManager <- R6::R6Class(
         down = c(0,1),
         left = c(-1,0)
       )
+    },
+    
+    can_object_move = function(location, direction) {
+      new_location <- private$get_new_location(location, direction)
+      if(any(new_location == 0) ) {
+        return(FALSE)
+      } else {
+        return(TRUE)
+      }
+    },
+    
+    get_new_location = function(location, direction) {
+      private$get_grid_element_location(location) + private$get_move_vector(direction)
     }
   ),
   public = list(
@@ -39,16 +54,17 @@ ObjectsManager <- R6::R6Class(
     
     move_object = function(object_name, direction) {
       location <- private[[object_name]]
-      self$clean_grid(location)
-      
-      new_location <- private$get_grid_element_location(location) + private$get_move_vector(direction)
-      new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2])
-      
-      self$add_on_grid(object_name, new_location_id)
+      if(private$can_object_move(location, direction)) {
+        self$clean_grid(location)
+        
+        new_location <- private$get_new_location(location, direction)
+        new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2])
+        
+        self$add_on_grid(object_name, new_location_id)
+      }
     },
     
     initialize = function() {
-      
     }
   )
 )
