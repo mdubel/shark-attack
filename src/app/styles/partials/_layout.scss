@@ -1,10 +1,10 @@
-// _todo_ add css rules here or in other partials files. Remember to import the files in the main.scss
-@import '../modules/themes.scss';
-
-#module_id-count_me {
-  color: black;
-  // use this wrapper for theme based rules
-  @include themify($themes) {
-    background-color: themed('button-background-color');
+.ms-Fabric {
+  height: 98vh;
+  div {
+    height: 100%;
+  }
+  .single-grid {
+    background-repeat: no-repeat;
+    background-position: center;
   }
 }

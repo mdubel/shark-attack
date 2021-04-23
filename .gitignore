@@ -3,3 +3,4 @@ environment/__pycache__
 __pycache__
 .Rproj.user
 .DS_Store
+.Renviron
