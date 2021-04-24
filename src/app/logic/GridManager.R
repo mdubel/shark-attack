@@ -26,6 +26,12 @@ GridManager <- R6::R6Class(
     get_grid_element_location = function(grid_id) {
       strsplit(grid_id, "-") %>% unlist() %>% as.numeric()
     },
+    random_grid_location = function(row_range, column_range) {
+      private$prepare_grid_element_id(
+        sample(row_range, 1),
+        sample(column_range, 1)
+      )
+    },
     create_grid = function() {
       grid_elements_ids <- expand.grid(
         x = seq_len(private$number_of_rows),
@@ -45,12 +51,6 @@ GridManager <- R6::R6Class(
   ),
   public = list(
     grid = NULL,
-    random_grid_location = function(row_range, column_range) {
-      private$prepare_grid_element_id(
-        sample(row_range, 1),
-        sample(column_range, 1)
-      )
-    },
     clean_grid = function(location) {
       shinyjs::runjs(glue("$('#{location}').css('background-image', 'none');"))
     },

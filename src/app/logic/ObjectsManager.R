@@ -52,6 +52,11 @@ ObjectsManager <- R6::R6Class(
       shinyjs::runjs(glue("$('#{location}').css('background-image', 'url(./assets/{object_name}.png)');"))
     },
     
+    place_objects = function() {
+      self$add_on_grid("diver", private$prepare_grid_element_id(1, 1))
+      self$add_on_grid("shark", private$random_grid_location(2:private$number_of_rows, 2:private$number_of_columns))
+    },
+    
     move_object = function(object_name, direction) {
       location <- private[[object_name]]
       if(private$can_object_move(location, direction)) {

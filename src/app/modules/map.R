@@ -30,7 +30,7 @@ server <- function(input, output, session, dataset) {
   })
   
   observeEvent(input$ala, {
-    ObjectsManager$add_on_grid("diver", "1-1")
+    ObjectsManager$place_objects()
   })
   
   observeEvent(input$move_direction, {

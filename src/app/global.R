@@ -7,7 +7,7 @@ library(shinyjs)
 library(glue)
 
 consts <- config::get(file = "constants/constants.yml")
-options(shiny.autoreload = TRUE)
+#options(shiny.autoreload = TRUE)
 sass(
   sass::sass_file(consts$sass$input),
   cache = FALSE,
