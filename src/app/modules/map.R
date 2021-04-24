@@ -30,13 +30,19 @@ server <- function(input, output, session, dataset) {
   })
   
   observeEvent(input$ala, {
-    ObjectsManager$add_on_grid("diver", "1-1")
+    ObjectsManager$place_objects()
   })
   
-  observeEvent(input$move_direction, {
-    req(input$move_direction != "clean")
-    ObjectsManager$move_object("diver", input$move_direction)
-    shinyjs::runjs("cleanKey();")
+  observeEvent(input$diver_direction, {
+    req(input$diver_direction != "clean")
+    ObjectsManager$move_object("diver", input$diver_direction)
+    shinyjs::runjs("cleanObject('diver');")
+  })
+  
+  observeEvent(input$shark_direction, {
+    req(input$shark_direction != "clean")
+    ObjectsManager$move_object("shark", input$shark_direction)
+    shinyjs::runjs("cleanObject('shark');")
   })
     
 }
