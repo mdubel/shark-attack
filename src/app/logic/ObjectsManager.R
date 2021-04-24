@@ -52,9 +52,15 @@ ObjectsManager <- R6::R6Class(
     },
     
     place_objects = function() {
-      if(!is.null(private$diver)) self$clean_grid(private$diver)
-      
+      if(!is.null(private$diver)) {
+        self$clean_grid(private$diver)
+        self$clean_grid(private$chest)
+        self$clean_grid(private$key)
+      }
+
       self$add_on_grid("diver", private$prepare_grid_element_id(1, 1))
+      self$add_on_grid("chest", private$random_grid_location(c(private$number_of_rows, private$number_of_rows), 1:private$number_of_columns))
+      self$add_on_grid("key", private$random_grid_location(2:(private$number_of_rows - 1) , 1:private$number_of_columns))
       self$add_on_grid("shark", private$random_grid_location(2:private$number_of_rows, 2:private$number_of_columns))
       shinyjs::runjs("randomMove('shark');")
     },
