@@ -5,6 +5,9 @@ import("shiny.fluent")
 export("ui", "init_server")
 
 utils <- use("utils/utils.R")
+
+gameOver <- use("modules/gameOver.R")
+
 GridManager <- use("logic/GridManager.R")$GridManager
 ObjectsManager <- use("logic/ObjectsManager.R")$ObjectsManager
 
@@ -13,12 +16,12 @@ ui <- function(id) {
   tagList(
     actionButton(ns("ala"), "Click"),
     uiOutput(ns("grid")),
-    reactOutput(ns("biteModal"))
+    gameOver$ui(ns("gameOver"))
   )
 }
 
 init_server <- function(id, dataset) {
-   callModule(server, id, dataset)
+  callModule(server, id, dataset)
 }
 
 server <- function(input, output, session, dataset) {
@@ -49,32 +52,14 @@ server <- function(input, output, session, dataset) {
     ObjectsManager$move_object("shark", input$shark_direction)
     
     if(ObjectsManager$check_shark_bite()) {
-      isBiteModalOpen(TRUE)
+      session$userData$isBiteModalOpen(TRUE)
     }
     
     shinyjs::runjs("cleanObject('shark');")
   })
   
   # GAME OVER ----
-  isBiteModalOpen <- reactiveVal(FALSE)
-  output$biteModal <- renderReact({
-    reactWidget(
-      Modal(
-        isOpen = isBiteModalOpen(), isBlocking = FALSE,
-        div(
-          style = "margin: 20px",
-          ShinyComponentWrapper(DefaultButton(session$ns("playAgain"), text = "Play Again!")),
-          ShinyComponentWrapper(DefaultButton(session$ns("hideModal"), text = "Close"))
-        )
-      )
-    )
-  })
+  session$userData$isBiteModalOpen <- reactiveVal(FALSE)
+  gameOver$init_server("gameOver", ObjectsManager)
   
-  observeEvent(input$hideModal, { isBiteModalOpen(FALSE) })
-  
-  observeEvent(input$playAgain, {
-    isBiteModalOpen(FALSE)
-    ObjectsManager$place_objects()
-  })
-    
 }

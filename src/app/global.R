@@ -15,5 +15,5 @@ sass(
   output = consts$sass$output
 )
 
-map <- use("modules/map.R")
+map <- use("modules/gridMap.R")
 DataManager <- use("logic/DataManager.R")$DataManager
