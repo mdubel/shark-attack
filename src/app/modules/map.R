@@ -63,13 +63,18 @@ server <- function(input, output, session, dataset) {
         isOpen = isBiteModalOpen(), isBlocking = FALSE,
         div(
           style = "margin: 20px",
-          h1("This is an important message"),
-          p("Read this text to learn more."),
+          ShinyComponentWrapper(DefaultButton(session$ns("playAgain"), text = "Play Again!")),
           ShinyComponentWrapper(DefaultButton(session$ns("hideModal"), text = "Close"))
         )
       )
     )
   })
+  
   observeEvent(input$hideModal, { isBiteModalOpen(FALSE) })
+  
+  observeEvent(input$playAgain, {
+    isBiteModalOpen(FALSE)
+    ObjectsManager$place_objects()
+  })
     
 }
