@@ -47,7 +47,6 @@ ObjectsManager <- R6::R6Class(
   ),
   public = list(
     add_on_grid = function(object_name, location) {
-      #location <- private$random_grid_location(seq_len(private$number_of_rows), seq_len(private$number_of_columns))
       private[[object_name]] <- location
       shinyjs::runjs(glue("$('#{location}').css('background-image', 'url(./assets/{object_name}.png)');"))
     },
@@ -55,6 +54,7 @@ ObjectsManager <- R6::R6Class(
     place_objects = function() {
       self$add_on_grid("diver", private$prepare_grid_element_id(1, 1))
       self$add_on_grid("shark", private$random_grid_location(2:private$number_of_rows, 2:private$number_of_columns))
+      shinyjs::runjs("randomMove('shark');")
     },
     
     move_object = function(object_name, direction) {
