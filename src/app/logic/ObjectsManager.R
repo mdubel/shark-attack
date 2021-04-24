@@ -52,9 +52,22 @@ ObjectsManager <- R6::R6Class(
     },
     
     place_objects = function() {
+      if(!is.null(private$diver)) self$clean_grid(private$diver)
+      
       self$add_on_grid("diver", private$prepare_grid_element_id(1, 1))
       self$add_on_grid("shark", private$random_grid_location(2:private$number_of_rows, 2:private$number_of_columns))
       shinyjs::runjs("randomMove('shark');")
+    },
+    
+    check_shark_bite = function() {
+      if(private$diver == private$shark) {
+        shinyjs::runjs("stopMove();")
+        self$clean_grid(private$diver)
+        self$add_on_grid("shark", private$shark)
+        return(TRUE)
+      } else {
+        return(FALSE)
+      }
     },
     
     move_object = function(object_name, direction) {
