@@ -59,6 +59,9 @@ ObjectsManager <- R6::R6Class(
     
     check_shark_bite = function() {
       if(private$diver == private$shark) {
+        shinyjs::runjs("stopMove();")
+        self$clean_grid(private$diver)
+        self$add_on_grid("shark", private$shark)
         return(TRUE)
       } else {
         return(FALSE)
