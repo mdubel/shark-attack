@@ -15,7 +15,7 @@ GridManager <- R6::R6Class(
     
     single_grid_element = function(id) {
       div(
-        style = "border: 1px solid black;",
+        style = "border: 1px solid black; background-color: teal;",
         class = "single-grid",
         id = id
       )
