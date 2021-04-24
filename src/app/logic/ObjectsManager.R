@@ -41,6 +41,26 @@ ObjectsManager <- R6::R6Class(
       }
     },
     
+    can_object_pass = function(object_name, location, direction) {
+      new_location <- private$get_new_location(location, direction)
+      key_location <- private$get_grid_element_location(private$key)
+      chest_location <- private$get_grid_element_location(private$chest)
+      
+      if(object_name == "shark") {
+        if(all(new_location == key_location) || all(new_location == chest_location)) {
+          return(FALSE)
+        } else {
+          return(TRUE)
+        }
+      } else if(object_name == "diver") {
+        if(all(new_location == chest_location)) {
+          return(FALSE)
+        } else {
+          return(TRUE)
+        }
+      }
+    },
+    
     get_new_location = function(location, direction) {
       private$get_grid_element_location(location) + private$get_move_vector(direction)
     }
@@ -78,7 +98,7 @@ ObjectsManager <- R6::R6Class(
     
     move_object = function(object_name, direction) {
       location <- private[[object_name]]
-      if(private$can_object_move(location, direction)) {
+      if(private$can_object_move(location, direction) && private$can_object_pass(object_name, location, direction)) {
         self$clean_grid(location)
         
         new_location <- private$get_new_location(location, direction)
