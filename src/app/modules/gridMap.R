@@ -49,6 +49,11 @@ server <- function(input, output, session, dataset) {
       session$userData$isBiteModalOpen(TRUE)
     }
     
+    ObjectsManager$check_collect()
+    if(ObjectsManager$check_success()) {
+      session$userData$isChestModalOpen(TRUE)
+    }
+    
     shinyjs::runjs("cleanObject('diver');")
   })
   

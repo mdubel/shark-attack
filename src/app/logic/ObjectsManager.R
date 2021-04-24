@@ -20,15 +20,16 @@ ObjectsManager <- R6::R6Class(
     boat = NULL,
     plants = NULL,
     
-    grid_manager = NULL,
+    is_key = FALSE,
+    is_chest = FALSE,
     
     get_move_vector = function(direction) {
       switch (
         direction,
-        up = c(0,-1),
-        right = c(1,0),
-        down = c(0,1),
-        left = c(-1,0)
+        up = c(0, -1),
+        right = c(1, 0),
+        down = c(0, 1),
+        left = c(-1, 0)
       )
     },
     
@@ -53,7 +54,7 @@ ObjectsManager <- R6::R6Class(
           return(TRUE)
         }
       } else if(object_name == "diver") {
-        if(all(new_location == chest_location)) {
+        if(all(new_location == chest_location) && !private$is_key) {
           return(FALSE)
         } else {
           return(TRUE)
@@ -90,6 +91,24 @@ ObjectsManager <- R6::R6Class(
         shinyjs::runjs("stopMove();")
         self$clean_grid(private$diver)
         self$add_on_grid("shark", private$shark)
+        return(TRUE)
+      } else {
+        return(FALSE)
+      }
+    },
+    
+    check_collect = function() {
+      if(private$diver == private$key) {
+        private$is_key <- TRUE
+      }
+      if(private$diver == private$chest) {
+        private$is_chest <- TRUE
+      }
+    },
+    
+    check_success = function() {
+      if(private$is_chest && private$diver == private$prepare_grid_element_id(1, 1)) {
+        shinyjs::runjs("stopMove();")
         return(TRUE)
       } else {
         return(FALSE)
