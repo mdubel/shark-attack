@@ -60,6 +60,8 @@ server <- function(input, output, session, dataset) {
   
   # GAME OVER ----
   session$userData$isBiteModalOpen <- reactiveVal(FALSE)
+  session$userData$isChestModalOpen <- reactiveVal(FALSE)
+  
   gameOver$init_server("gameOver", ObjectsManager)
   
 }
