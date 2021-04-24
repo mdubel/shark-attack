@@ -57,6 +57,14 @@ ObjectsManager <- R6::R6Class(
       shinyjs::runjs("randomMove('shark');")
     },
     
+    check_shark_bite = function() {
+      if(private$diver == private$shark) {
+        return(TRUE)
+      } else {
+        return(FALSE)
+      }
+    },
+    
     move_object = function(object_name, direction) {
       location <- private[[object_name]]
       if(private$can_object_move(location, direction)) {
