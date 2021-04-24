@@ -15,7 +15,7 @@ GridManager <- R6::R6Class(
     
     single_grid_element = function(id) {
       div(
-        style = "border: 1px solid black;",
+        style = "border: 1px solid black; background-color: teal;",
         class = "single-grid",
         id = id
       )
@@ -28,8 +28,8 @@ GridManager <- R6::R6Class(
     },
     random_grid_location = function(row_range, column_range) {
       private$prepare_grid_element_id(
-        sample(row_range, 1),
-        sample(column_range, 1)
+        sample(column_range, 1),
+        sample(row_range, 1)
       )
     },
     create_grid = function() {

@@ -73,6 +73,7 @@ server <- function(input, output, session, ObjectsManager) {
   
   observeEvent(input$playAgain, {
     session$userData$isBiteModalOpen(FALSE)
+    session$userData$isChestModalOpen(FALSE)
     ObjectsManager$place_objects()
   })
   

@@ -20,15 +20,16 @@ ObjectsManager <- R6::R6Class(
     boat = NULL,
     plants = NULL,
     
-    grid_manager = NULL,
+    is_key = FALSE,
+    is_chest = FALSE,
     
     get_move_vector = function(direction) {
       switch (
         direction,
-        up = c(0,-1),
-        right = c(1,0),
-        down = c(0,1),
-        left = c(-1,0)
+        up = c(0, -1),
+        right = c(1, 0),
+        down = c(0, 1),
+        left = c(-1, 0)
       )
     },
     
@@ -38,6 +39,26 @@ ObjectsManager <- R6::R6Class(
         return(FALSE)
       } else {
         return(TRUE)
+      }
+    },
+    
+    can_object_pass = function(object_name, location, direction) {
+      new_location <- private$get_new_location(location, direction)
+      key_location <- private$get_grid_element_location(private$key)
+      chest_location <- private$get_grid_element_location(private$chest)
+      
+      if(object_name == "shark") {
+        if(all(new_location == key_location) || all(new_location == chest_location)) {
+          return(FALSE)
+        } else {
+          return(TRUE)
+        }
+      } else if(object_name == "diver") {
+        if(all(new_location == chest_location) && !private$is_key) {
+          return(FALSE)
+        } else {
+          return(TRUE)
+        }
       }
     },
     
@@ -52,9 +73,15 @@ ObjectsManager <- R6::R6Class(
     },
     
     place_objects = function() {
-      if(!is.null(private$diver)) self$clean_grid(private$diver)
-      
+      if(!is.null(private$diver)) {
+        self$clean_grid(private$diver)
+        self$clean_grid(private$chest)
+        self$clean_grid(private$key)
+      }
+
       self$add_on_grid("diver", private$prepare_grid_element_id(1, 1))
+      self$add_on_grid("chest", private$random_grid_location(c(private$number_of_rows, private$number_of_rows), 1:private$number_of_columns))
+      self$add_on_grid("key", private$random_grid_location(2:(private$number_of_rows - 1) , 1:private$number_of_columns))
       self$add_on_grid("shark", private$random_grid_location(2:private$number_of_rows, 2:private$number_of_columns))
       shinyjs::runjs("randomMove('shark');")
     },
@@ -70,9 +97,27 @@ ObjectsManager <- R6::R6Class(
       }
     },
     
+    check_collect = function() {
+      if(private$diver == private$key) {
+        private$is_key <- TRUE
+      }
+      if(private$diver == private$chest) {
+        private$is_chest <- TRUE
+      }
+    },
+    
+    check_success = function() {
+      if(private$is_chest && private$diver == private$prepare_grid_element_id(1, 1)) {
+        shinyjs::runjs("stopMove();")
+        return(TRUE)
+      } else {
+        return(FALSE)
+      }
+    },
+    
     move_object = function(object_name, direction) {
       location <- private[[object_name]]
-      if(private$can_object_move(location, direction)) {
+      if(private$can_object_move(location, direction) && private$can_object_pass(object_name, location, direction)) {
         self$clean_grid(location)
         
         new_location <- private$get_new_location(location, direction)

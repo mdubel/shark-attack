@@ -44,6 +44,16 @@ server <- function(input, output, session, dataset) {
   observeEvent(input$diver_direction, {
     req(input$diver_direction != "clean")
     ObjectsManager$move_object("diver", input$diver_direction)
+    
+    if(ObjectsManager$check_shark_bite()) {
+      session$userData$isBiteModalOpen(TRUE)
+    }
+    
+    ObjectsManager$check_collect()
+    if(ObjectsManager$check_success()) {
+      session$userData$isChestModalOpen(TRUE)
+    }
+    
     shinyjs::runjs("cleanObject('diver');")
   })
   
