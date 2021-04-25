@@ -16,4 +16,5 @@ sass(
 )
 
 map <- use("modules/gridMap.R")
+
 DataManager <- use("logic/DataManager.R")$DataManager
