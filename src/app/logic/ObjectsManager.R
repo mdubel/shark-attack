@@ -48,13 +48,13 @@ ObjectsManager <- R6::R6Class(
       new_location <- private$get_new_location(location, direction)
       new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2]) 
       if(object_name == "shark") {
-        if(all(new_location_id == private$objects$key) || all(new_location_id == private$objects$chest) || any(new_location_id == private$objects$plants)) {
+        if(all(new_location_id == private$objects$key) || all(new_location_id == private$objects$chest) || any(new_location_id == private$objects$plants) || all(new_location_id == private$objects$boat)) {
           return(FALSE)
         } else {
           return(TRUE)
         }
       } else if(object_name == "diver") {
-        if((all(new_location_id == private$objects$chest) && !private$is_key) || any(new_location_id == private$objects$plants)) {
+        if((all(new_location_id == private$objects$chest) && !private$is_key) || any(new_location_id == private$objects$plants) || (all(new_location_id == private$objects$boat) && !private$is_chest)) {
           return(FALSE)
         } else {
           return(TRUE)
@@ -88,6 +88,10 @@ ObjectsManager <- R6::R6Class(
 
       self$add_on_grid(
         "diver",
+        private$prepare_grid_element_id(1, 2)
+      )
+      self$add_on_grid(
+        "boat",
         private$prepare_grid_element_id(1, 1)
       )
       self$add_on_grid(
@@ -155,6 +159,10 @@ ObjectsManager <- R6::R6Class(
     check_success = function() {
       if(private$is_chest && isTRUE(private$objects$diver == private$prepare_grid_element_id(1, 1))) {
         shinyjs::runjs("stopMove();")
+        self$add_on_grid(
+          "boat",
+          private$prepare_grid_element_id(1, 1)
+        )
         return(TRUE)
       } else {
         return(FALSE)
