@@ -68,6 +68,14 @@ ObjectsManager <- R6::R6Class(
     
     occupied_grids = function() {
       private$objects %>% unlist() %>% unname()
+    },
+    
+    rotate_element = function(location, direction) {
+      if(direction == "left") {
+        shinyjs::runjs(glue("$('#{location}').removeClass('rotated');"))
+      } else if(direction == "right") {
+        shinyjs::runjs(glue("$('#{location}').addClass('rotated');"))
+      }
     }
   ),
   public = list(
@@ -178,6 +186,7 @@ ObjectsManager <- R6::R6Class(
         new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2])
         
         self$add_on_grid(object_name, new_location_id)
+        private$rotate_element(new_location_id, direction)
       }
     },
 
