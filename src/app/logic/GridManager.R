@@ -17,7 +17,6 @@ GridManager <- R6::R6Class(
     
     single_grid_element = function(id) {
       div(
-        style = "border: 1px solid black; background-color: teal;",
         class = "single-grid",
         id = id
       )
@@ -53,6 +52,7 @@ GridManager <- R6::R6Class(
            grid-template-rows: repeat(%s, 1fr);",
           private$number_of_columns, private$number_of_rows
         ),
+        class = "all-grid",
         lapply(grid_elements_ids, private$single_grid_element)
       )
     }
