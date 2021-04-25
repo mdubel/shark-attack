@@ -13,6 +13,8 @@ GridManager <- R6::R6Class(
     number_of_columns = 10,
     number_of_rows = 10,
     
+    number_of_plants = 10, # TODO set as % of area
+    
     single_grid_element = function(id) {
       div(
         style = "border: 1px solid black; background-color: teal;",
@@ -26,11 +28,17 @@ GridManager <- R6::R6Class(
     get_grid_element_location = function(grid_id) {
       strsplit(grid_id, "-") %>% unlist() %>% as.numeric()
     },
-    random_grid_location = function(row_range, column_range) {
-      private$prepare_grid_element_id(
+    random_grid_location = function(row_range, column_range, occupied_grids) {
+      location <- private$prepare_grid_element_id(
         sample(column_range, 1),
         sample(row_range, 1)
       )
+      
+      if(location %in% occupied_grids) {
+        private$random_grid_location(row_range, column_range, occupied_grids)
+      } else {
+        return(location)
+      }
     },
     create_grid = function() {
       grid_elements_ids <- expand.grid(
@@ -51,9 +59,6 @@ GridManager <- R6::R6Class(
   ),
   public = list(
     grid = NULL,
-    clean_grid = function(location) {
-      shinyjs::runjs(glue("$('#{location}').css('background-image', 'none');"))
-    },
     initialize = function() {
       self$grid <- private$create_grid()
     }
