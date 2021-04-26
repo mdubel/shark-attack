@@ -63,13 +63,25 @@ server <- function(input, output, session, ObjectsManager, consts) {
         class = "modal-element modal-element--play"
       ),
       div(
+        ShinyComponentWrapper(PrimaryButton(session$ns("mainMenu"), text = "Back to Menu!")),
+        class = "modal-element modal-element--menu"
+      ),
+      div(
         ShinyComponentWrapper(DefaultButton(session$ns("learnMore"), text = "Learn More!")),
         class = "modal-element modal-element--learn"
       )
     )
   }
   
-  observeEvent(input$learnMore, { session$userData$isBiteModalOpen(FALSE) })
+  observeEvent(input$learnMore, { 
+    # TODO open in new tab appropriate site
+  })
+  
+  observeEvent(input$mainMenu, {
+    session$userData$isBiteModalOpen(FALSE)
+    session$userData$isChestModalOpen(FALSE)
+    session$userData$isStartModalOpen(TRUE)
+  })
   
   observeEvent(input$playAgain, {
     session$userData$isBiteModalOpen(FALSE)

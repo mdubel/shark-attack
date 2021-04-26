@@ -41,9 +41,11 @@ server <- function(input, output, session, consts) {
   gameStart$init_server("gameStart", ObjectsManager, consts)
   
   observeEvent(input$level, {
+    req(input$level != "clean")
     session$userData$isStartModalOpen(FALSE)
     session$userData$level <- input$level
     ObjectsManager$place_objects(input$level)
+    shinyjs::runjs("cleanObject('level');")
   })
   
   # MOVE OBJECTS ----
@@ -60,7 +62,7 @@ server <- function(input, output, session, consts) {
       session$userData$isChestModalOpen(TRUE)
     }
     
-    shinyjs::runjs("cleanObject('diver');")
+    shinyjs::runjs("cleanObject('diver_direction');")
   })
   
   observeEvent(input$shark_direction, {
@@ -71,7 +73,7 @@ server <- function(input, output, session, consts) {
       session$userData$isBiteModalOpen(TRUE)
     }
     
-    shinyjs::runjs("cleanObject('shark');")
+    shinyjs::runjs("cleanObject('shark_direction');")
   })
   
   # GAME OVER ----
