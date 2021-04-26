@@ -10,7 +10,7 @@ export("GridManager")
 GridManager <- R6::R6Class(
   "GridManager",
   private = list(
-    number_of_columns = 10,
+    number_of_columns = 20,
     number_of_rows = 10,
     
     number_of_plants = 10, # TODO set as % of area
@@ -27,22 +27,23 @@ GridManager <- R6::R6Class(
     get_grid_element_location = function(grid_id) {
       strsplit(grid_id, "-") %>% unlist() %>% as.numeric()
     },
-    random_grid_location = function(row_range, column_range, occupied_grids) {
+    random_grid_location = function(column_range, row_range, occupied_grids) {
       location <- private$prepare_grid_element_id(
         sample(column_range, 1),
         sample(row_range, 1)
       )
       
       if(location %in% occupied_grids) {
-        private$random_grid_location(row_range, column_range, occupied_grids)
+        private$random_grid_location(column_range, row_range, occupied_grids)
       } else {
         return(location)
       }
     },
     create_grid = function() {
+      # Columns go first, that is how grid is organized, column-wise
       grid_elements_ids <- expand.grid(
-        x = seq_len(private$number_of_rows),
-        y = seq_len(private$number_of_columns)
+        x = seq_len(private$number_of_columns),
+        y = seq_len(private$number_of_rows)
       ) %>% {private$prepare_grid_element_id(id_col = .$x, id_row = .$y)}
       
       div(

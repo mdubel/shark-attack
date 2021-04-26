@@ -105,24 +105,24 @@ ObjectsManager <- R6::R6Class(
       self$add_on_grid(
         "chest",
         private$random_grid_location(
-          c(private$number_of_rows, private$number_of_rows),
           1:private$number_of_columns,
+          c(private$number_of_rows, private$number_of_rows),
           private$occupied_grids()
         )
       )
       self$add_on_grid(
         "key",
         private$random_grid_location(
-          2:(private$number_of_rows - 1),
           1:private$number_of_columns,
+          2:(private$number_of_rows - 1),
           private$occupied_grids()
         )
       )
       self$add_on_grid(
         "shark",
         private$random_grid_location(
-          2:private$number_of_rows,
           2:private$number_of_columns,
+          2:private$number_of_rows,
           private$occupied_grids()
         )
       )
@@ -133,8 +133,8 @@ ObjectsManager <- R6::R6Class(
           self$add_on_multiple_grid(
             "plants",
             private$random_grid_location(
-              1:private$number_of_rows,
               1:private$number_of_columns,
+              1:private$number_of_rows,
               private$occupied_grids()
             )
           )
