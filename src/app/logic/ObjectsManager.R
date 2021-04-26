@@ -22,6 +22,8 @@ ObjectsManager <- R6::R6Class(
       plants = c()
     ),
     
+    level = NULL,
+    
     is_key = FALSE,
     is_chest = FALSE,
     
@@ -79,10 +81,10 @@ ObjectsManager <- R6::R6Class(
     }
   ),
   public = list(
-    add_on_grid = function(object_name, location) {
+    add_on_grid = function(object_name, location, image_name = object_name) {
       self$clean_grid(location)
       private$objects[[object_name]] <- location
-      shinyjs::runjs(glue("$('#{location}').css('background-image', 'url(./assets/{object_name}.png)');"))
+      shinyjs::runjs(glue("$('#{location}').css('background-image', 'url(./assets/{image_name}.png)');"))
     },
     
     add_on_multiple_grid = function(object_name, location) {
@@ -91,8 +93,10 @@ ObjectsManager <- R6::R6Class(
       shinyjs::runjs(glue("$('#{location}').css('background-image', 'url(./assets/{object_name}.png)');"))
     },
     
-    place_objects = function() {
+    place_objects = function(level) {
       self$clean_it_all()
+      
+      private$level <- level
 
       self$add_on_grid(
         "diver",
@@ -124,7 +128,8 @@ ObjectsManager <- R6::R6Class(
           2:private$number_of_columns,
           2:private$number_of_rows,
           private$occupied_grids()
-        )
+        ),
+        image_name = private$level
       )
       
       purrr::walk(
@@ -148,7 +153,7 @@ ObjectsManager <- R6::R6Class(
       if(private$objects$diver == private$objects$shark) {
         shinyjs::runjs("stopMove();")
         self$clean_grid(private$objects$diver)
-        self$add_on_grid("shark", private$objects$shark)
+        self$add_on_grid("shark", private$objects$shark, private$level)
         return(TRUE)
       } else {
         return(FALSE)
@@ -185,7 +190,10 @@ ObjectsManager <- R6::R6Class(
         new_location <- private$get_new_location(location, direction)
         new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2])
         
-        self$add_on_grid(object_name, new_location_id)
+        self$add_on_grid(
+          object_name, new_location_id,
+          ifelse(object_name == "shark", private$level, object_name)
+        )
         private$rotate_element(new_location_id, direction)
       }
     },

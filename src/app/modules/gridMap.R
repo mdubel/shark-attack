@@ -42,7 +42,8 @@ server <- function(input, output, session, consts) {
   
   observeEvent(input$level, {
     session$userData$isStartModalOpen(FALSE)
-    ObjectsManager$place_objects()
+    session$userData$level <- input$level
+    ObjectsManager$place_objects(input$level)
   })
   
   # MOVE OBJECTS ----
