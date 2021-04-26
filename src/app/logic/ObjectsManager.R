@@ -199,6 +199,7 @@ ObjectsManager <- R6::R6Class(
     
     clean_it_all = function() {
       shinyjs::runjs("$('.single-grid').css('background-image', 'none');")
+      shinyjs::runjs("stopMove();")
       private$is_key <- FALSE
       private$is_chest <- FALSE
       purrr::walk(names(private$objects), function(object_name) private$objects[[object_name]] <- c())

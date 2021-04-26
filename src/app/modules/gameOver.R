@@ -13,11 +13,11 @@ ui <- function(id) {
   )
 }
 
-init_server <- function(id, ObjectsManager) {
-  callModule(server, id, ObjectsManager)
+init_server <- function(id, ObjectsManager, consts) {
+  callModule(server, id, ObjectsManager, consts)
 }
 
-server <- function(input, output, session, ObjectsManager) {
+server <- function(input, output, session, ObjectsManager, consts) {
   ns <- session$ns
   
   output$biteModal <- renderReact({
@@ -55,7 +55,7 @@ server <- function(input, output, session, ObjectsManager) {
   build_modal_content <- function() {
     tagList(
       div(
-        div(Text(variant = "xLarge", "The best Lorem Ipsum Generator in all the sea! Heave this scurvy copyfiller fer yar next adventure and cajol yar clients into walking the plank with ev'ry layout! Configure above, then get yer pirate ipsum...own the high seas, arg!")),
+        div(Text(variant = "xLarge", consts$texts$gameOver)),
         class = "modal-element modal-element--text"
       ),
       div(
