@@ -33,10 +33,11 @@ server <- function(input, output, session, ObjectsManager, consts) {
   })
   
   level_icon <- function(type) {
-    div(img(src = glue("./assets/{type}.png")), class = "start-element start-element--icon")
+    div(img(src = glue("./assets/{type}.png")), class = "start-element start-element--icon", id = glue("level-{type}"))
   }
   
   start_content <- function() {
+    shinyjs::runjs("setLevelClick();")
     tagList(
       div(
         # TODO Implement carousel with game tutorial
