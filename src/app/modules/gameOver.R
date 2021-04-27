@@ -13,11 +13,11 @@ ui <- function(id) {
   )
 }
 
-init_server <- function(id, ObjectsManager) {
-  callModule(server, id, ObjectsManager)
+init_server <- function(id, ObjectsManager, consts) {
+  callModule(server, id, ObjectsManager, consts)
 }
 
-server <- function(input, output, session, ObjectsManager) {
+server <- function(input, output, session, ObjectsManager, consts) {
   ns <- session$ns
   
   output$biteModal <- renderReact({
@@ -55,12 +55,16 @@ server <- function(input, output, session, ObjectsManager) {
   build_modal_content <- function() {
     tagList(
       div(
-        div(Text(variant = "xLarge", "The best Lorem Ipsum Generator in all the sea! Heave this scurvy copyfiller fer yar next adventure and cajol yar clients into walking the plank with ev'ry layout! Configure above, then get yer pirate ipsum...own the high seas, arg!")),
+        div(Text(variant = "xLarge", consts$texts$gameOver)),
         class = "modal-element modal-element--text"
       ),
       div(
         ShinyComponentWrapper(PrimaryButton(session$ns("playAgain"), text = "Play Again!")),
         class = "modal-element modal-element--play"
+      ),
+      div(
+        ShinyComponentWrapper(PrimaryButton(session$ns("mainMenu"), text = "Back to Menu!")),
+        class = "modal-element modal-element--menu"
       ),
       div(
         ShinyComponentWrapper(DefaultButton(session$ns("learnMore"), text = "Learn More!")),
@@ -69,12 +73,20 @@ server <- function(input, output, session, ObjectsManager) {
     )
   }
   
-  observeEvent(input$learnMore, { session$userData$isBiteModalOpen(FALSE) })
+  observeEvent(input$learnMore, { 
+    # TODO open in new tab appropriate site
+  })
+  
+  observeEvent(input$mainMenu, {
+    session$userData$isBiteModalOpen(FALSE)
+    session$userData$isChestModalOpen(FALSE)
+    session$userData$isStartModalOpen(TRUE)
+  })
   
   observeEvent(input$playAgain, {
     session$userData$isBiteModalOpen(FALSE)
     session$userData$isChestModalOpen(FALSE)
-    ObjectsManager$place_objects()
+    ObjectsManager$place_objects(session$userData$level)
   })
   
 }

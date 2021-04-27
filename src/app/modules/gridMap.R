@@ -7,6 +7,7 @@ export("ui", "init_server")
 utils <- use("utils/utils.R")
 
 gameOver <- use("modules/gameOver.R")
+gameStart <- use("modules/gameStart.R")
 
 GridManager <- use("logic/GridManager.R")$GridManager
 ObjectsManager <- use("logic/ObjectsManager.R")$ObjectsManager
@@ -14,17 +15,17 @@ ObjectsManager <- use("logic/ObjectsManager.R")$ObjectsManager
 ui <- function(id) {
   ns <- NS(id)
   tagList(
-    actionButton(ns("ala"), "Click"),
+    gameStart$ui(ns("gameStart")),
     uiOutput(ns("grid")),
     gameOver$ui(ns("gameOver"))
   )
 }
 
-init_server <- function(id, dataset) {
-  callModule(server, id, dataset)
+init_server <- function(id, consts) {
+  callModule(server, id, consts)
 }
 
-server <- function(input, output, session, dataset) {
+server <- function(input, output, session, consts) {
   ns <- session$ns
   
   # PREPARE GRID ----
@@ -36,8 +37,15 @@ server <- function(input, output, session, dataset) {
   })
   
   # START GAME ----
-  observeEvent(input$ala, {
-    ObjectsManager$place_objects()
+  session$userData$isStartModalOpen <- reactiveVal(TRUE)
+  gameStart$init_server("gameStart", ObjectsManager, consts)
+  
+  observeEvent(input$level, {
+    req(input$level != "clean")
+    session$userData$isStartModalOpen(FALSE)
+    session$userData$level <- input$level
+    ObjectsManager$place_objects(input$level)
+    shinyjs::runjs("cleanObject('level');")
   })
   
   # MOVE OBJECTS ----
@@ -54,7 +62,7 @@ server <- function(input, output, session, dataset) {
       session$userData$isChestModalOpen(TRUE)
     }
     
-    shinyjs::runjs("cleanObject('diver');")
+    shinyjs::runjs("cleanObject('diver_direction');")
   })
   
   observeEvent(input$shark_direction, {
@@ -65,13 +73,14 @@ server <- function(input, output, session, dataset) {
       session$userData$isBiteModalOpen(TRUE)
     }
     
-    shinyjs::runjs("cleanObject('shark');")
+    shinyjs::runjs("cleanObject('shark_direction');")
   })
   
   # GAME OVER ----
+  # TODO modify to one reactiveValues
   session$userData$isBiteModalOpen <- reactiveVal(FALSE)
   session$userData$isChestModalOpen <- reactiveVal(FALSE)
   
-  gameOver$init_server("gameOver", ObjectsManager)
+  gameOver$init_server("gameOver", ObjectsManager, consts)
   
 }

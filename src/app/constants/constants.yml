@@ -6,5 +6,5 @@ default:
     style: "compressed"
     output: "www/css/sass.min.css"
   texts:
-    button_label: "Click me"
-    clicked_info: "You clicked me %.0f times!"
+    gameOver: "The best Lorem Ipsum Generator in all the sea! Heave this scurvy copyfiller fer yar next adventure and cajol yar clients into walking the plank with ev'ry layout! Configure above, then get yer pirate ipsum...own the high seas, arg!"
+    

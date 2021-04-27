@@ -40,5 +40,5 @@ function stopMove() {
 }
 
 function cleanObject(object_name) {
-  Shiny.setInputValue('map-' + object_name + '_direction', 'clean');
+  Shiny.setInputValue('map-' + object_name, 'clean');
 }

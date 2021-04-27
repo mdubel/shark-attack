@@ -1,7 +1,7 @@
 .modal-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 200px 150px;
+  grid-template-rows: 120px 150px 50px;
   padding: 20px;
   gap: 10px;
   
@@ -14,12 +14,17 @@
     
     &--play {
       grid-column: 3 / span 1;
-      grid-row: 2 / span 1;
+      grid-row: 3 / span 1;
     }
   
     &--learn {
+      grid-column: 2 / span 1;
+      grid-row: 3 / span 1;
+    }
+    
+    &--menu {
       grid-column: 1 / span 1;
-      grid-row: 2 / span 1;
+      grid-row: 3 / span 1;
     }
     
     &--text {
@@ -30,11 +35,69 @@
     }
     
     &--icon {
-      grid-column: 2 / span 1;
+      grid-column: 1 / span 3;
       grid-row: 2 / span 1;
       img {
         width: 150px;
       }
+    }
+  }
+}
+
+.start-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 200px 30px 100px;
+  padding: 20px;
+  gap: 10px;
+  
+  .start-element {
+    div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    &--carousel {
+      grid-column: 1 / span 3;
+      grid-row: 1 / span 1;
+      border: 2px solid black;
+    }
+    
+    &--text {
+      grid-column: 1 / span 3;
+      grid-row: 2 / span 1;
+      justify-self: stretch;
+      text-align: center;
+    }
+    
+    &--icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform .2s;
+      img {
+        width: 50px;
+      }
+      &:hover {
+        transform: scale(1.5);
+      }
+    }
+  }
+  
+  .level-icon {
+    border-radius: 100px;
+    &--easy {
+      grid-column: 1 / span 1;
+      grid-row: 3 / span 1;
+    }
+    &--medium {
+      grid-column: 2 / span 1;
+      grid-row: 3 / span 1;
+    }
+    &--hard {
+      grid-column: 3 / span 1;
+      grid-row: 3 / span 1;
     }
   }
 }
@@ -45,5 +108,9 @@
 }
 
 #map-gameOver-chestModal {
+  position: fixed;
+}
+
+#map-gameStart-startModal {
   position: fixed;
 }
