@@ -13,7 +13,8 @@ GridManager <- R6::R6Class(
     number_of_columns = 20,
     number_of_rows = 10,
     
-    number_of_plants = 10, # TODO set as % of area
+    number_of_plants = 10, 
+    number_of_sharks = 8,
     
     single_grid_element = function(id) {
       div(
