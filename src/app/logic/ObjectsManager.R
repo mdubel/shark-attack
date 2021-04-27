@@ -81,16 +81,10 @@ ObjectsManager <- R6::R6Class(
     }
   ),
   public = list(
-    add_on_grid = function(object_name, location, image_name = object_name) {
+    add_on_grid = function(object_name, location, image_name = object_name, index = 1) {
       self$clean_grid(location)
-      private$objects[[object_name]] <- location
+      private$objects[[object_name]][index] <- location
       shinyjs::runjs(glue("$('#{location}').css('background-image', 'url(./assets/{image_name}.png)');"))
-    },
-    
-    add_on_multiple_grid = function(object_name, location) {
-      self$clean_grid(location)
-      private$objects[[object_name]] <- c(private$objects[[object_name]], location)
-      shinyjs::runjs(glue("$('#{location}').css('background-image', 'url(./assets/{object_name}.png)');"))
     },
     
     place_objects = function(level) {
@@ -122,35 +116,43 @@ ObjectsManager <- R6::R6Class(
           private$occupied_grids()
         )
       )
-      self$add_on_grid(
-        "shark",
-        private$random_grid_location(
-          2:private$number_of_columns,
-          2:private$number_of_rows,
-          private$occupied_grids()
-        ),
-        image_name = private$level
+      
+      purrr::walk(
+        seq_len(private$number_of_sharks),
+        function(index) {
+          self$add_on_grid(
+            "shark",
+            private$random_grid_location(
+              2:private$number_of_columns,
+              2:private$number_of_rows,
+              private$occupied_grids()
+            ),
+            image_name = private$level,
+            index = index
+          )
+        }
       )
       
       purrr::walk(
         seq_len(private$number_of_plants),
-        function(x) {
-          self$add_on_multiple_grid(
+        function(index) {
+          self$add_on_grid(
             "plants",
             private$random_grid_location(
               1:private$number_of_columns,
               1:private$number_of_rows,
               private$occupied_grids()
-            )
+            ),
+            index = index
           )
         }
       )
       
-      shinyjs::runjs("randomMove('shark');")
+      shinyjs::runjs(glue("randomMove('shark', {private$number_of_sharks});"))
     },
     
     check_shark_bite = function() {
-      if(private$objects$diver == private$objects$shark) {
+      if(private$objects$diver %in% private$objects$shark) {
         shinyjs::runjs("stopMove();")
         self$clean_grid(private$objects$diver)
         self$add_on_grid("shark", private$objects$shark, private$level)
@@ -182,8 +184,8 @@ ObjectsManager <- R6::R6Class(
       }
     },
     
-    move_object = function(object_name, direction) {
-      location <- private$objects[[object_name]]
+    move_object = function(object_name, direction, index = 1) {
+      location <- private$objects[[object_name]][index]
       if(private$can_object_move(location, direction) && private$can_object_pass(object_name, location, direction)) {
         self$clean_grid(location)
         
@@ -192,7 +194,8 @@ ObjectsManager <- R6::R6Class(
         
         self$add_on_grid(
           object_name, new_location_id,
-          ifelse(object_name == "shark", private$level, object_name)
+          ifelse(object_name == "shark", private$level, object_name),
+          index = index
         )
         private$rotate_element(new_location_id, direction)
       }

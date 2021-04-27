@@ -23,14 +23,19 @@ function checkKey(e) {
   }
 }
 
-function randomMove(object_name) {
+function randomMove(object_name, object_count) {
   var directions = ['left', 'right', 'up', 'down'];
   var input_id = 'map-' + object_name + '_direction';
   
   diverMove = true;
   sharkIntervalId = setInterval(function() {
-    var random_direction = Math.floor((Math.random()*directions.length));
-    Shiny.setInputValue(input_id, directions[random_direction]);
+    var final_directions = [];
+    var random_direction = 0;
+    for(i = 0; i < object_count; i++) {
+      random_direction = Math.floor((Math.random()*directions.length));
+      final_directions[i] = directions[random_direction];
+    }
+    Shiny.setInputValue(input_id, final_directions);
   }, 500);
 }
 

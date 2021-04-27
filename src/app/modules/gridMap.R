@@ -67,7 +67,7 @@ server <- function(input, output, session, consts) {
   
   observeEvent(input$shark_direction, {
     req(input$shark_direction != "clean")
-    ObjectsManager$move_object("shark", input$shark_direction)
+    purrr::iwalk(input$shark_direction, ~ObjectsManager$move_object("shark", .x, index = .y))
     
     if(ObjectsManager$check_shark_bite()) {
       session$userData$isBiteModalOpen(TRUE)
