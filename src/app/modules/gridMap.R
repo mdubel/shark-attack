@@ -57,9 +57,8 @@ server <- function(input, output, session, consts) {
       session$userData$isBiteModalOpen(TRUE)
     }
     
-    ObjectsManager$check_collect()
     if(ObjectsManager$check_success()) {
-      session$userData$isChestModalOpen(TRUE)
+      session$userData$isSuccessModalOpen(TRUE)
     }
     
     shinyjs::runjs("cleanObject('diver_direction');")
@@ -79,7 +78,7 @@ server <- function(input, output, session, consts) {
   # GAME OVER ----
   # TODO modify to one reactiveValues
   session$userData$isBiteModalOpen <- reactiveVal(FALSE)
-  session$userData$isChestModalOpen <- reactiveVal(FALSE)
+  session$userData$isSuccessModalOpen <- reactiveVal(FALSE)
   
   gameOver$init_server("gameOver", ObjectsManager, consts)
   

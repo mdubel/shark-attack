@@ -16,16 +16,11 @@ ObjectsManager <- R6::R6Class(
     objects = list(
       diver = c(),
       shark = c(),
-      chest = c(),
-      key = c(),
       boat = c(),
       plants = c()
     ),
     
     level = NULL,
-    
-    is_key = FALSE,
-    is_chest = FALSE,
     
     get_move_vector = function(direction) {
       switch (
@@ -50,13 +45,13 @@ ObjectsManager <- R6::R6Class(
       new_location <- private$get_new_location(location, direction)
       new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2]) 
       if(object_name == "shark") {
-        if(all(new_location_id == private$objects$key) || all(new_location_id == private$objects$chest) || any(new_location_id == private$objects$plants) || all(new_location_id == private$objects$boat)) {
+        if(any(new_location_id == private$objects$plants) || all(new_location_id == private$objects$boat) || any(new_location_id == private$objects$shark)) {
           return(FALSE)
         } else {
           return(TRUE)
         }
       } else if(object_name == "diver") {
-        if((all(new_location_id == private$objects$chest) && !private$is_key) || any(new_location_id == private$objects$plants) || (all(new_location_id == private$objects$boat) && !private$is_chest)) {
+        if(any(new_location_id == private$objects$plants)) {
           return(FALSE)
         } else {
           return(TRUE)
@@ -99,22 +94,6 @@ ObjectsManager <- R6::R6Class(
       self$add_on_grid(
         "boat",
         private$prepare_grid_element_id(1, 1)
-      )
-      self$add_on_grid(
-        "chest",
-        private$random_grid_location(
-          1:private$number_of_columns,
-          c(private$number_of_rows, private$number_of_rows),
-          private$occupied_grids()
-        )
-      )
-      self$add_on_grid(
-        "key",
-        private$random_grid_location(
-          1:private$number_of_columns,
-          2:(private$number_of_rows - 1),
-          private$occupied_grids()
-        )
       )
       
       purrr::walk(
@@ -162,21 +141,12 @@ ObjectsManager <- R6::R6Class(
       }
     },
     
-    check_collect = function() {
-      if(private$objects$key == private$objects$diver) {
-        private$is_key <- TRUE
-      }
-      if(private$objects$chest == private$objects$diver) {
-        private$is_chest <- TRUE
-      }
-    },
-    
     check_success = function() {
-      if(private$is_chest && isTRUE(private$objects$diver == private$prepare_grid_element_id(1, 1))) {
+      if(isTRUE(private$objects$diver == private$objects$boat)) {
         shinyjs::runjs("stopMove();")
         self$add_on_grid(
           "boat",
-          private$prepare_grid_element_id(1, 1)
+          private$objects$boat
         )
         return(TRUE)
       } else {
@@ -211,8 +181,6 @@ ObjectsManager <- R6::R6Class(
     clean_it_all = function() {
       shinyjs::runjs("$('.single-grid').css('background-image', 'none');")
       shinyjs::runjs("stopMove();")
-      private$is_key <- FALSE
-      private$is_chest <- FALSE
       purrr::walk(names(private$objects), function(object_name) private$objects[[object_name]] <- c())
     },
     

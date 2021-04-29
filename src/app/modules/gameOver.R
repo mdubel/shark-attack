@@ -9,7 +9,7 @@ ui <- function(id) {
   ns <- NS(id)
   tagList(
     reactOutput(ns("biteModal")),
-    reactOutput(ns("chestModal"))
+    reactOutput(ns("successModal"))
   )
 }
 
@@ -34,11 +34,11 @@ server <- function(input, output, session, ObjectsManager, consts) {
     )
   })
   
-  output$chestModal <- renderReact({
+  output$successModal <- renderReact({
     reactWidget(
       Modal(
         className = "bite-modal",
-        isOpen = session$userData$isChestModalOpen(), isBlocking = FALSE,
+        isOpen = session$userData$isSuccessModalOpen(), isBlocking = FALSE,
         div(
           class = "modal-grid",
           build_icon("success"),
@@ -79,13 +79,13 @@ server <- function(input, output, session, ObjectsManager, consts) {
   
   observeEvent(input$mainMenu, {
     session$userData$isBiteModalOpen(FALSE)
-    session$userData$isChestModalOpen(FALSE)
+    session$userData$isSuccessModalOpen(FALSE)
     session$userData$isStartModalOpen(TRUE)
   })
   
   observeEvent(input$playAgain, {
     session$userData$isBiteModalOpen(FALSE)
-    session$userData$isChestModalOpen(FALSE)
+    session$userData$isSuccessModalOpen(FALSE)
     ObjectsManager$place_objects(session$userData$level)
   })
   
