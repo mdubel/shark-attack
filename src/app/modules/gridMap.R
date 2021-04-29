@@ -61,12 +61,16 @@ server <- function(input, output, session, consts) {
       session$userData$isSuccessModalOpen(TRUE)
     }
     
+    ObjectsManager$check_collect()
+    
     shinyjs::runjs("cleanObject('diver_direction');")
   })
   
   observeEvent(input$shark_direction, {
     req(input$shark_direction != "clean")
     purrr::iwalk(input$shark_direction, ~ObjectsManager$move_object("shark", .x, index = .y))
+    
+    ObjectsManager$move_all_trash()
     
     if(ObjectsManager$check_shark_bite()) {
       session$userData$isBiteModalOpen(TRUE)

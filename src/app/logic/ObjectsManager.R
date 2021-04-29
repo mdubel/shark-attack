@@ -22,6 +22,23 @@ ObjectsManager <- R6::R6Class(
     
     level = NULL,
     
+    number_of_plants = 10, 
+    number_of_sharks = 8,
+    initial_trash_count = 10,
+    
+    trash = list(
+      one = c(),
+      two = c()
+    ),
+    trash_chances = list(
+      one = 0.2,
+      two = 0.8
+    ),
+    trash_points = list(
+      one = 1,
+      two = 2
+    ),
+    
     get_move_vector = function(direction) {
       switch (
         direction,
@@ -45,17 +62,27 @@ ObjectsManager <- R6::R6Class(
       new_location <- private$get_new_location(location, direction)
       new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2]) 
       if(object_name == "shark") {
-        if(any(new_location_id == private$objects$plants) || all(new_location_id == private$objects$boat) || any(new_location_id == private$objects$shark)) {
+        if(new_location_id %in% private$objects$plants || new_location_id == private$objects$boat || new_location_id %in% private$objects$shark || new_location_id %in% private$occupied_trash()) {
           return(FALSE)
         } else {
           return(TRUE)
         }
       } else if(object_name == "diver") {
-        if(any(new_location_id == private$objects$plants)) {
+        if(new_location_id %in% private$objects$plants) {
           return(FALSE)
         } else {
           return(TRUE)
         }
+      }
+    },
+    
+    can_trash_pass = function(location, direction) {
+      new_location <- private$get_new_location(location, direction)
+      new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2])
+      if(new_location_id %in% c(private$occupied_grids(), private$occupied_trash())) {
+        return(FALSE)
+      } else {
+        return(TRUE)
       }
     },
     
@@ -67,24 +94,24 @@ ObjectsManager <- R6::R6Class(
       private$objects %>% unlist() %>% unname()
     },
     
-    rotate_element = function(location, direction) {
-      if(direction == "left") {
-        shinyjs::runjs(glue("$('#{location}').removeClass('rotated');"))
-      } else if(direction == "right") {
-        shinyjs::runjs(glue("$('#{location}').addClass('rotated');"))
-      }
+    occupied_trash = function() {
+      private$trash %>% unlist() %>% unname()
+    },
+    
+    random_trash = function() {
+      sample(names(private$trash_chances), 1, prob = unlist(private$trash_chances))
     }
   ),
   public = list(
-    add_on_grid = function(object_name, location, image_name = object_name, index = 1) {
-      self$clean_grid(location)
-      private$objects[[object_name]][index] <- location
+    add_on_grid = function(object_name, location, image_name = object_name, index = 1, type = "objects") {
+      private$clean_grid(location)
+      private[[type]][[object_name]][index] <- location
       shinyjs::runjs(glue("$('#{location}').css('background-image', 'url(./assets/{image_name}.png)');"))
     },
     
     place_objects = function(level) {
       self$clean_it_all()
-      
+
       private$level <- level
 
       self$add_on_grid(
@@ -127,13 +154,15 @@ ObjectsManager <- R6::R6Class(
         }
       )
       
+      self$place_trash()
+      
       shinyjs::runjs(glue("randomMove('shark', {private$number_of_sharks});"))
     },
     
     check_shark_bite = function() {
       if(private$objects$diver %in% private$objects$shark) {
         shinyjs::runjs("stopMove();")
-        self$clean_grid(private$objects$diver)
+        private$clean_grid(private$objects$diver)
         self$add_on_grid("shark", private$objects$shark, private$level)
         return(TRUE)
       } else {
@@ -157,7 +186,7 @@ ObjectsManager <- R6::R6Class(
     move_object = function(object_name, direction, index = 1) {
       location <- private$objects[[object_name]][index]
       if(private$can_object_move(location, direction) && private$can_object_pass(object_name, location, direction)) {
-        self$clean_grid(location)
+        private$clean_grid(location)
         
         new_location <- private$get_new_location(location, direction)
         new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2])
@@ -170,18 +199,78 @@ ObjectsManager <- R6::R6Class(
         private$rotate_element(new_location_id, direction)
       }
     },
-
-    clean_grid = function(locations) {
-      purrr::walk(
-        locations, 
-        function(location) shinyjs::runjs(glue("$('#{location}').css('background-image', 'none');"))
-      )
-    },
     
     clean_it_all = function() {
       shinyjs::runjs("$('.single-grid').css('background-image', 'none');")
       shinyjs::runjs("stopMove();")
       purrr::walk(names(private$objects), function(object_name) private$objects[[object_name]] <- c())
+      purrr::walk(names(private$trash), function(trash_name) private$trash[[trash_name]] <- c())
+    },
+    
+    place_trash = function() {
+      purrr::walk(
+        seq_len(private$initial_trash_count),
+        function(index) {
+          trash_name <- private$random_trash()
+          self$add_on_grid(
+            trash_name,
+            private$random_grid_location(
+              1:private$number_of_columns,
+              1:private$number_of_rows,
+              c(private$occupied_grids(), private$occupied_trash())
+            ),
+            index = length(private$trash[[trash_name]]) + 1,
+            type = "trash"
+          )
+        }
+      )
+    },
+    
+    check_collect = function() {
+print("######")      
+print(private$trash)      
+print(private$occupied_trash())      
+      if(length(private$occupied_trash()) > 0 && private$objects$diver %in% private$occupied_trash()) {
+        self$add_on_grid(
+          "diver",
+          private$objects$diver
+        )
+        print("Collected!")
+        return(TRUE)
+      } else {
+        return(FALSE)
+      }
+    },
+    
+    move_all_trash = function() {
+      purrr::walk(
+        names(private$trash),
+        function(trash_name) {
+          iwalk(private$trash[[trash_name]], ~self$move_trash(trash_name, .x, sample(c("left", "down"), 1), .y))
+        }
+      )
+    },
+    
+    move_trash = function(trash_name, location, direction, index = 1) {
+      if(private$can_object_move(location, direction)) {
+        if(private$can_trash_pass(location, direction)) {
+          private$clean_grid(location)
+          new_location <- private$get_new_location(location, direction)
+          new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2])
+          
+          self$add_on_grid(
+            trash_name,
+            new_location_id,
+            index = index,
+            type = "trash"
+          )
+          
+          self$check_collect()
+        }
+      } else {
+        private$clean_grid(location)
+        private$trash[[trash_name]] <- private$trash[[trash_name]][-index]
+      }
     },
     
     initialize = function() {
