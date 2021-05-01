@@ -94,6 +94,12 @@ ObjectsManager <- R6::R6Class(
         } else {
           return(TRUE)
         }
+      } else if(object_name == "boat") {
+        if(new_location_id %in% private$objects$plants || new_location_id %in% private$objects$shark || new_location_id %in% private$occupied_trash()) {
+          return(FALSE)
+        } else {
+          return(TRUE)
+        }
       }
     },
     
@@ -175,7 +181,7 @@ ObjectsManager <- R6::R6Class(
             "plants",
             private$random_grid_location(
               1:private$number_of_columns,
-              1:private$number_of_rows,
+              2:private$number_of_rows,
               private$occupied_grids()
             ),
             index = index
