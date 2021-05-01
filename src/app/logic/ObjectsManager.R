@@ -21,6 +21,16 @@ ObjectsManager <- R6::R6Class(
     ),
     
     level = NULL,
+    points = list(
+      easy = 0,
+      medium = 0,
+      hard = 0
+    ),
+    points_max = list(
+      easy = 0,
+      medium = 0,
+      hard = 0
+    ),
     
     number_of_plants = 10, 
     number_of_sharks = 8,
@@ -100,6 +110,15 @@ ObjectsManager <- R6::R6Class(
     
     random_trash = function() {
       sample(names(private$trash_chances), 1, prob = unlist(private$trash_chances))
+    },
+    
+    set_scores = function() {
+      purrr::walk(names(private$points), function(level) {
+        if(private$points[[level]] > private$points_max[[level]]) {
+          private$points_max[[level]] <- private$points[[level]]
+        }
+        private$points[[level]] <- 0
+      })
     }
   ),
   public = list(
@@ -205,6 +224,7 @@ ObjectsManager <- R6::R6Class(
       shinyjs::runjs("stopMove();")
       purrr::walk(names(private$objects), function(object_name) private$objects[[object_name]] <- c())
       purrr::walk(names(private$trash), function(trash_name) private$trash[[trash_name]] <- c())
+      private$set_scores()
     },
     
     place_trash = function() {
@@ -232,10 +252,9 @@ ObjectsManager <- R6::R6Class(
           "diver",
           private$objects$diver
         )
-        print("Collected!")
-        return(TRUE)
-      } else {
-        return(FALSE)
+        trash_collected <- names(private$trash)[purrr::map_lgl(private$trash, ~private$objects$diver %in% .x)]
+        private$points[[private$level]] <- private$points[[private$level]] + private$trash_points[[trash_collected]]
+        self$remove_trash(trash_collected,  private$objects$diver)
       }
     },
     
@@ -246,6 +265,10 @@ ObjectsManager <- R6::R6Class(
           iwalk(private$trash[[trash_name]], ~self$move_trash(trash_name, .x, sample(c("left", "down"), 1), .y))
         }
       )
+    },
+    
+    remove_trash = function(trash_name, location) {
+      private$trash[[trash_name]] <- setdiff(private$trash[[trash_name]], location)
     },
     
     move_trash = function(trash_name, location, direction, index = 1) {
@@ -266,7 +289,7 @@ ObjectsManager <- R6::R6Class(
         }
       } else {
         private$clean_grid(location)
-        private$trash[[trash_name]] <- setdiff(private$trash[[trash_name]], location)
+        self$remove_trash(trash_name, location)
       }
     },
     

@@ -70,7 +70,10 @@ server <- function(input, output, session, consts) {
     req(input$shark_direction != "clean")
     purrr::iwalk(input$shark_direction, ~ObjectsManager$move_object("shark", .x, index = .y))
     
-    ObjectsManager$move_all_trash()
+    # Move trash on average on 1/4 shark move.
+    if(input$shark_direction[1] == "up") {
+      ObjectsManager$move_all_trash()
+    }
     
     if(ObjectsManager$check_shark_bite()) {
       session$userData$isBiteModalOpen(TRUE)
