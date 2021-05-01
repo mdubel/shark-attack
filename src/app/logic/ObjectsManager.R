@@ -32,13 +32,13 @@ ObjectsManager <- R6::R6Class(
       hard = 0
     ),
     
-    number_of_plants = 10, 
+    number_of_plants = 20, 
     number_of_sharks = list(
-      easy = 2,
-      medium = 4,
-      hard = 8
+      easy = 4,
+      medium = 8,
+      hard = 12
     ),
-    initial_trash_count = 10,
+    initial_trash_count = 15,
     new_trash_count = 1,
     
     trash = list(
@@ -139,6 +139,14 @@ ObjectsManager <- R6::R6Class(
         }
         private$points[[level]] <- 0
       })
+      shinyjs::runjs("updateScore('0');")
+    },
+  
+    update_score = function() {
+      trash_collected <- names(private$trash)[purrr::map_lgl(private$trash, ~private$objects$diver %in% .x)]
+      private$points[[private$level]] <- private$points[[private$level]] + private$trash_points[[trash_collected]]
+      shinyjs::runjs(glue("updateScore({private$points[[private$level]]});"))
+      self$remove_trash(trash_collected,  private$objects$diver)
     }
   ),
   public = list(
@@ -150,7 +158,7 @@ ObjectsManager <- R6::R6Class(
     
     place_objects = function(level) {
       self$clean_it_all()
-      shinyjs::runjs("runTimer(10);")
+      shinyjs::runjs("runTimer(60);")
 
       private$level <- level
 
@@ -273,9 +281,8 @@ ObjectsManager <- R6::R6Class(
           "diver",
           private$objects$diver
         )
-        trash_collected <- names(private$trash)[purrr::map_lgl(private$trash, ~private$objects$diver %in% .x)]
-        private$points[[private$level]] <- private$points[[private$level]] + private$trash_points[[trash_collected]]
-        self$remove_trash(trash_collected,  private$objects$diver)
+
+        private$update_score()
       }
     },
     
