@@ -33,7 +33,11 @@ ObjectsManager <- R6::R6Class(
     ),
     
     number_of_plants = 10, 
-    number_of_sharks = 8,
+    number_of_sharks = list(
+      easy = 2,
+      medium = 4,
+      hard = 8
+    ),
     initial_trash_count = 10,
     new_trash_count = 1,
     
@@ -159,7 +163,7 @@ ObjectsManager <- R6::R6Class(
       )
       
       purrr::walk(
-        seq_len(private$number_of_sharks),
+        seq_len(private$number_of_sharks[[private$level]]),
         function(index) {
           self$add_on_grid(
             "shark",
@@ -191,7 +195,7 @@ ObjectsManager <- R6::R6Class(
       
       self$place_trash()
       
-      shinyjs::runjs(glue("randomMove('shark', {private$number_of_sharks});"))
+      shinyjs::runjs(glue("randomMove('shark', {private$number_of_sharks[[private$level]]});"))
     },
     
     check_shark_bite = function() {
