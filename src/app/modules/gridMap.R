@@ -57,10 +57,11 @@ server <- function(input, output, session, consts) {
       session$userData$isBiteModalOpen(TRUE)
     }
     
-    ObjectsManager$check_collect()
     if(ObjectsManager$check_success()) {
-      session$userData$isChestModalOpen(TRUE)
+      session$userData$isSuccessModalOpen(TRUE)
     }
+    
+    ObjectsManager$check_collect()
     
     shinyjs::runjs("cleanObject('diver_direction');")
   })
@@ -68,6 +69,11 @@ server <- function(input, output, session, consts) {
   observeEvent(input$shark_direction, {
     req(input$shark_direction != "clean")
     purrr::iwalk(input$shark_direction, ~ObjectsManager$move_object("shark", .x, index = .y))
+    
+    # Move trash on average on 1/4 shark move.
+    if(input$shark_direction[1] == "up") {
+      ObjectsManager$move_all_trash()
+    }
     
     if(ObjectsManager$check_shark_bite()) {
       session$userData$isBiteModalOpen(TRUE)
@@ -79,7 +85,7 @@ server <- function(input, output, session, consts) {
   # GAME OVER ----
   # TODO modify to one reactiveValues
   session$userData$isBiteModalOpen <- reactiveVal(FALSE)
-  session$userData$isChestModalOpen <- reactiveVal(FALSE)
+  session$userData$isSuccessModalOpen <- reactiveVal(FALSE)
   
   gameOver$init_server("gameOver", ObjectsManager, consts)
   
