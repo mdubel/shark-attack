@@ -50,8 +50,8 @@ ObjectsManager <- R6::R6Class(
       radio = c()
     ),
     trash_chances = list(
-      organic = 0.05,
-      glass = 0.15,
+      organic = 0.1,
+      glass = 0.1,
       metal = 0.15,
       electro = 0.2,
       plastic = 0.4,
@@ -150,6 +150,7 @@ ObjectsManager <- R6::R6Class(
     
     place_objects = function(level) {
       self$clean_it_all()
+      shinyjs::runjs("runTimer(10);")
 
       private$level <- level
 
