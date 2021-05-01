@@ -75,6 +75,13 @@ server <- function(input, output, session, consts) {
       ObjectsManager$move_all_trash()
     }
     
+    if(input$shark_direction[1] %in% c("left", "right")) {
+      ObjectsManager$move_object("boat", input$shark_direction[1])
+      if(ObjectsManager$check_success()) {
+        session$userData$isSuccessModalOpen(TRUE)
+      }
+    }
+    
     if(ObjectsManager$check_shark_bite()) {
       session$userData$isBiteModalOpen(TRUE)
     }
