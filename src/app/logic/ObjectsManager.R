@@ -227,9 +227,6 @@ ObjectsManager <- R6::R6Class(
     },
     
     check_collect = function() {
-print("######")      
-print(private$trash)      
-print(private$occupied_trash())      
       if(length(private$occupied_trash()) > 0 && private$objects$diver %in% private$occupied_trash()) {
         self$add_on_grid(
           "diver",
@@ -269,7 +266,7 @@ print(private$occupied_trash())
         }
       } else {
         private$clean_grid(location)
-        private$trash[[trash_name]] <- private$trash[[trash_name]][-index]
+        private$trash[[trash_name]] <- setdiff(private$trash[[trash_name]], location)
       }
     },
     
