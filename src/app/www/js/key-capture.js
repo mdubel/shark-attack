@@ -41,6 +41,7 @@ function randomMove(object_name, object_count) {
 
 function stopMove() {
   clearInterval(sharkIntervalId);
+  clearInterval(timeIntervalId);
   diverMove = false;
 }
 

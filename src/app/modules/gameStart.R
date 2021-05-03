@@ -22,7 +22,7 @@ server <- function(input, output, session, ObjectsManager, consts) {
   output$startModal <- renderReact({
     reactWidget(
       Modal(
-        className = "start-modal",
+        className = "modal",
         isOpen = session$userData$isStartModalOpen(), isBlocking = FALSE,
         div(
           class = "start-grid",

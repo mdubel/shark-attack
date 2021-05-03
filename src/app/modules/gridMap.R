@@ -15,6 +15,7 @@ ObjectsManager <- use("logic/ObjectsManager.R")$ObjectsManager
 ui <- function(id) {
   ns <- NS(id)
   tagList(
+    Persona(className = "score_board", imageInitials = "0", primaryText = "1:00", initialsColor = "#41aa00"),
     gameStart$ui(ns("gameStart")),
     uiOutput(ns("grid")),
     gameOver$ui(ns("gameOver"))
@@ -48,6 +49,14 @@ server <- function(input, output, session, consts) {
     shinyjs::runjs("cleanObject('level');")
   })
   
+  # TIMES UP ----
+  observeEvent(input$stop_game, {
+    req(isTRUE(input$stop_game))
+    shinyjs::runjs("stopMove();")
+    session$userData$isBiteModalOpen(TRUE)
+    shinyjs::runjs("cleanObject('stop_game');")
+  })
+    
   # MOVE OBJECTS ----
   observeEvent(input$diver_direction, {
     req(input$diver_direction != "clean")
