@@ -6,6 +6,6 @@ default:
     style: "compressed"
     output: "www/css/sass.min.css"
   texts:
-    gameOver: "The best Lorem Ipsum Generator in all the sea! Heave this scurvy copyfiller fer yar next adventure and cajol yar clients into walking the plank with ev'ry layout! Configure above, then get yer pirate ipsum...own the high seas, arg!"
+    gameOver: "You've tried hard, the planet is grateful for your sacrifice. Let's hope your followers will do better."
     gameSuccess: "Congratulations! The ocean is now... a little bit cleaner. Still a lot of work to do!"
     
