@@ -323,6 +323,18 @@ ObjectsManager <- R6::R6Class(
       }
     },
     
+    get_scores = function() {
+      if(is.null(private$level)) {
+        return(list())
+      }
+      list(
+        current = as.character(private$points[[private$level]]),
+        easy = as.character(private$points_max$easy),
+        medium = as.character(private$points_max$medium),
+        hard = as.character(private$points_max$hard)
+      )
+    },
+    
     initialize = function() {
     }
   )

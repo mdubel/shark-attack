@@ -43,7 +43,7 @@ server <- function(input, output, session, ObjectsManager, consts) {
         div(
           class = "success-grid",
           build_text(consts$texts$gameSuccess),
-          build_scores_table(list(current = "56", easy = "123", medium = "32", hard = "2")),
+          build_scores_table(ObjectsManager$get_scores()),
           build_icon("success"),
           build_buttons()
         )

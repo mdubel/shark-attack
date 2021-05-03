@@ -15,7 +15,7 @@ ObjectsManager <- use("logic/ObjectsManager.R")$ObjectsManager
 ui <- function(id) {
   ns <- NS(id)
   tagList(
-    Persona(className = "score_board", imageInitials = "0", primaryText = "1:00", initialsColor = "#195627"),
+    Persona(className = "score_board", imageInitials = "0", primaryText = "1:00", initialsColor = "#41aa00"),
     gameStart$ui(ns("gameStart")),
     uiOutput(ns("grid")),
     gameOver$ui(ns("gameOver"))
