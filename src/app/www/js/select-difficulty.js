@@ -14,5 +14,5 @@ function addClickToLevel(level) {
 }
 
 function setLevel(level) {
-  Shiny.setInputValue("map-level", level);
+  Shiny.setInputValue("level", level);
 }

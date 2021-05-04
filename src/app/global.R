@@ -15,4 +15,10 @@ sass(
   output = consts$sass$output
 )
 
-map <- use("modules/gridMap.R")
+utils <- use("utils/utils.R")
+
+gameOver <- use("modules/gameOver.R")
+gameStart <- use("modules/gameStart.R")
+
+GridManager <- use("logic/GridManager.R")$GridManager
+ObjectsManager <- use("logic/ObjectsManager.R")$ObjectsManager
