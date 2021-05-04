@@ -28,7 +28,7 @@ server <- function(input, output, session, ObjectsManager, consts) {
           div(
             div(ShinyComponentWrapper(IconButton(ns("step_left"), iconProps = list(iconName = "ChevronLeft"))), class = "arrow arrow--left"),
             div(ShinyComponentWrapper(SwatchColorPicker(ns("tutorial_step"), "1", colorCells = tutorial_steps_config, columnCount = length(tutorial_steps_config))), class = "steps"),
-            div(class = "image"),
+            div(class = "image", img(src = "./assets/tutorial1.png")),
             div(class = "text", h4(consts$tutorial[[1]])),
             div(ShinyComponentWrapper(IconButton(ns("step_right"), iconProps = list(iconName = "ChevronRight"))), class = "arrow arrow--right"),
             class = "start-element start-element--tutorial"
