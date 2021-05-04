@@ -8,4 +8,10 @@ default:
   texts:
     gameOver: "You've tried hard, the planet is grateful for your sacrifice. Let's hope your followers will do better."
     gameSuccess: "Congratulations! The ocean is now... a little bit cleaner. Still a lot of work to do!"
+  links:
+    link1: "https://www.conservation.org/stories/ocean-pollution-11-facts-you-need-to-know"
+    link2: "https://www.noaa.gov/education/resource-collections/ocean-coasts/ocean-pollution"
+    link3: "https://www.nrdc.org/stories/ocean-pollution-dirty-facts"
+    link4: "http://www.unesco.org/new/en/natural-sciences/ioc-oceans/focus-areas/rio-20-ocean/blueprint-for-the-future-we-want/marine-pollution/"
+    link5: "https://www.nationalgeographic.com/science/article/150109-oceans-plastic-sea-trash-science-marine-debris"
     

@@ -107,8 +107,12 @@ server <- function(input, output, session, ObjectsManager, consts) {
     )
   }
   
-  observeEvent(input$learnMore, { 
-    # TODO open in new tab appropriate site
+  open_in_new_tab <- function(url) {
+    shinyjs::runjs(glue("window.open('{url}', '_blank');"))
+  }
+  
+  observeEvent(input$learnMore, {
+    purrr::walk(consts$links, ~open_in_new_tab(.x))
   })
   
   observeEvent(input$mainMenu, {
