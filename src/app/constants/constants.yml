@@ -5,6 +5,8 @@ default:
     input: "styles/main.scss"
     style: "compressed"
     output: "www/css/sass.min.css"
+  colors:
+    success: "#41aa00"
   texts:
     gameOver: "You've tried hard, the planet is grateful for your sacrifice. Let's hope your followers will do better."
     gameSuccess: "Congratulations! The ocean is now... a little bit cleaner. Still a lot of work to do!"

@@ -93,15 +93,15 @@ server <- function(input, output, session, ObjectsManager, consts) {
   build_buttons <- function() {
     tagList(
       div(
-        ShinyComponentWrapper(PrimaryButton(session$ns("playAgain"), text = "Play Again!")),
+        ShinyComponentWrapper(PrimaryButton(ns("playAgain"), text = "Play Again!")),
         class = "modal-element modal-element--play"
       ),
       div(
-        ShinyComponentWrapper(PrimaryButton(session$ns("mainMenu"), text = "Back to Menu!")),
+        ShinyComponentWrapper(PrimaryButton(ns("mainMenu"), text = "Back to Menu!")),
         class = "modal-element modal-element--menu"
       ),
       div(
-        ShinyComponentWrapper(DefaultButton(session$ns("learnMore"), text = "Learn More!")),
+        ShinyComponentWrapper(DefaultButton(ns("learnMore"), text = "Learn More!")),
         class = "modal-element modal-element--learn"
       )
     )
