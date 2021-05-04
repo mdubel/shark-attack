@@ -4,7 +4,8 @@ fluentPage(
     tags$link(rel = "stylesheet", type = "text/css", href = "css/sass.min.css"),
     tags$script(src = "js/key-capture.js"),
     tags$script(src = "js/select-difficulty.js"),
-    tags$script(src = "js/timer.js")
+    tags$script(src = "js/timer.js"),
+    tags$script(src = "js/tutorial.js")
   ),
   useShinyjs(),
   withReact(
