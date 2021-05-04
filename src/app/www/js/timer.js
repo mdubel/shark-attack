@@ -3,7 +3,7 @@ function runTimer(time_in_sec) {
     time_in_sec = time_in_sec - 1;
     updateTimer(time_in_sec);
     if(time_in_sec === 0) {
-      Shiny.setInputValue("map-stop_game", true);
+      Shiny.setInputValue("stop_game", true);
       clearInterval(timeIntervalId);
     }
   }, 1000);

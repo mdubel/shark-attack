@@ -4,7 +4,7 @@ $( document ).ready(function() {
 
 function checkKey(e) {
   e = e || window.event;
-  var input_id = "map-diver_direction";
+  var input_id = "diver_direction";
   if(diverMove) {
     switch (event.key) {
       case "ArrowLeft":
@@ -25,7 +25,7 @@ function checkKey(e) {
 
 function randomMove(object_name, object_count) {
   var directions = ['left', 'right', 'up', 'down'];
-  var input_id = 'map-' + object_name + '_direction';
+  var input_id = object_name + '_direction';
   
   diverMove = true;
   sharkIntervalId = setInterval(function() {
@@ -46,5 +46,5 @@ function stopMove() {
 }
 
 function cleanObject(object_name) {
-  Shiny.setInputValue('map-' + object_name, 'clean');
+  Shiny.setInputValue(object_name, 'clean');
 }

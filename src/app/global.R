@@ -7,7 +7,7 @@ library(shinyjs)
 library(glue)
 
 consts <- config::get(file = "constants/constants.yml")
-#options(shiny.autoreload = TRUE)
+
 sass(
   sass::sass_file(consts$sass$input),
   cache = FALSE,
@@ -15,4 +15,10 @@ sass(
   output = consts$sass$output
 )
 
-map <- use("modules/gridMap.R")
+utils <- use("utils/utils.R")
+
+gameOver <- use("modules/gameOver.R")
+gameStart <- use("modules/gameStart.R")
+
+GridManager <- use("logic/GridManager.R")$GridManager
+ObjectsManager <- use("logic/ObjectsManager.R")$ObjectsManager
