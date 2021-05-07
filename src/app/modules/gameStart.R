@@ -35,7 +35,7 @@ server <- function(input, output, session, ObjectsManager, consts) {
           ),
           span(
             class = "start-element--levels",
-            div(class = "level-icon--text", h4("Select difficulty")),
+            div(class = "level-icon--text", h4("Select difficulty to start the game")),
             div(class = "level-icon--easy", level_icon("easy")),
             div(class = "level-icon--medium", level_icon("medium")),
             div(class = "level-icon--hard", level_icon("hard"))
@@ -50,7 +50,7 @@ server <- function(input, output, session, ObjectsManager, consts) {
   }
   
   tutorial_steps_config <- lapply(seq_along(consts$tutorial), function(index) {
-    list(id = as.character(index), color = consts$colors$success)
+    list(id = as.character(index), color = consts$colors$navy)
   })
   
   observeEvent(input$tutorial_step, {
