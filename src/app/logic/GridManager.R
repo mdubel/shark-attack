@@ -41,10 +41,18 @@ GridManager <- R6::R6Class(
       }
     },
     
-    clean_grid = function(locations) {
+    clean_grid = function(selector) {
+      shinyjs::runjs(glue(
+        "$('{selector}').css('background-image', 'none').removeClass('rotated').html('').attr('class', 'single-grid');"
+      ))
+    },
+    
+    clean_locations = function(locations) {
       purrr::walk(
         locations, 
-        function(location) shinyjs::runjs(glue("$('#{location}').css('background-image', 'none'); $('#{location}').removeClass('rotated'); $('#{location}').html('');"))
+        function(location) {
+          private$clean_grid(glue("#{location}"))
+        }
       )
     },
     

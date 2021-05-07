@@ -15,14 +15,12 @@ function updateTimer(time_in_sec) {
     if(seconds_left < 10) {
       seconds_left = "0" + seconds_left;
       $('#grid').css('border', '4px solid red');
-      $('.ms-Persona-primaryText').css('color', 'red');
-      $('.ms-Persona-primaryText').css('font-weight', 'bolder');
     } else {
       $('#grid').css('border', 'none');
-      $('.ms-Persona-primaryText').css('color', 'black');
-      $('.ms-Persona-primaryText').css('font-weight', 'normal');
     }
-    $('.ms-Persona-primaryText').text(minutes_left + ":" + seconds_left);
+    var time_left = minutes_left + ":" + seconds_left;
+    Shiny.setInputValue("time_left", time_left);
+    $('.timer').text(time_left);
 }
 
 function updateScore(score) {
