@@ -13,6 +13,8 @@
       opacity: 1;
       display: block;
       position: absolute;
+      font-weight: bold;
+      color: $darkblue;
       &.timer {
         right: 5%;
       }
