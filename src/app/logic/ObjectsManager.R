@@ -142,18 +142,30 @@ ObjectsManager <- R6::R6Class(
       shinyjs::runjs("updateScore('0');")
     },
   
-    update_score = function() {
-      trash_collected <- names(private$trash)[purrr::map_lgl(private$trash, ~private$objects$diver %in% .x)]
-      private$points[[private$level]] <- private$points[[private$level]] + private$trash_points[[trash_collected]]
+    update_score = function(trash_collected, points) {
+      private$points[[private$level]] <- private$points[[private$level]] + points
       shinyjs::runjs(glue("updateScore({private$points[[private$level]]});"))
       self$remove_trash(trash_collected,  private$objects$diver)
     }
   ),
   public = list(
-    add_on_grid = function(object_name, location, image_name = object_name, index = 1, type = "objects") {
+    #' Main function to place objects on grid element.
+    #'
+    #' @param object_name string; name of the object as listed on `objects` or `trash``
+    #' @param location string; grid unique id where to place
+    #' @param image_name string; name of the png from www/assets, if different than object_name
+    #' @param index numeric; for objects with multiple instances (e.g. sharks) index of object from that group
+    #' @param type string; which list of objects to use
+    #' @param extra_content string; HTML code that can be placed additionally on grid
+    #'
+    #' @return
+    add_on_grid = function(object_name, location, image_name = object_name, index = 1, type = "objects", extra_content = NULL) {
       private$clean_grid(location)
       private[[type]][[object_name]][index] <- location
       shinyjs::runjs(glue("$('#{location}').css('background-image', 'url(./assets/{image_name}.png)');"))
+      if(!is.null(extra_content)) {
+        shinyjs::runjs(glue("$('#{location}').html('{extra_content}');"))
+      }
     },
     
     place_objects = function(level) {
@@ -277,12 +289,16 @@ ObjectsManager <- R6::R6Class(
     
     check_collect = function() {
       if(length(private$occupied_trash()) > 0 && private$objects$diver %in% private$occupied_trash()) {
+        trash_collected <- names(private$trash)[purrr::map_lgl(private$trash, ~private$objects$diver %in% .x)]
+        points <- private$trash_points[[trash_collected]]
+        
         self$add_on_grid(
           "diver",
-          private$objects$diver
+          private$objects$diver,
+          extra_content = glue("<p class=show-score-{trash_collected}>+{points}</p>")
         )
 
-        private$update_score()
+        private$update_score(trash_collected, points)
       }
     },
     

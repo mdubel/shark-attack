@@ -44,7 +44,7 @@ GridManager <- R6::R6Class(
     clean_grid = function(locations) {
       purrr::walk(
         locations, 
-        function(location) shinyjs::runjs(glue("$('#{location}').css('background-image', 'none'); $('#{location}').removeClass('rotated');"))
+        function(location) shinyjs::runjs(glue("$('#{location}').css('background-image', 'none'); $('#{location}').removeClass('rotated'); $('#{location}').html('');"))
       )
     },
     

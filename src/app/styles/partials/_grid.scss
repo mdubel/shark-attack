@@ -7,6 +7,35 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
+    p {
+      margin: 0;
+      opacity: 1;
+      display: block;
+      &.show-score-organic {
+        font-size: 20px;
+        color: $yellow;
+      }
+      &.show-score-glass {
+        font-size: 20px;
+        color: $yellow;
+      }
+      &.show-score-metal {
+        font-size: 20px;
+        color: $yellow;
+      }
+      &.show-score-electro {
+        font-size: 20px;
+        color: $yellow;
+      }
+      &.show-score-plastic {
+        font-size: 20px;
+        color: $yellow;
+      }
+      &.show-score-radio {
+        font-size: 20px;
+        color: $yellow;
+      }
+    }
     &.rotated {
       transform: rotateY(180deg);
     }
