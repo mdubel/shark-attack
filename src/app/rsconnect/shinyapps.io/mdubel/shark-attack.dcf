@@ -1,0 +1,13 @@
+name: shark-attack
+title: shark-attack
+username:
+account: mdubel
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4076895
+bundleId: 4556884
+url: https://mdubel.shinyapps.io/shark-attack/
+when: 1620153807.34166
+lastSyncTime: 1620153807.34168
+asMultiple: FALSE
+asStatic: FALSE
