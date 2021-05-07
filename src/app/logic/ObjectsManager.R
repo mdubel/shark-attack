@@ -12,7 +12,11 @@ export("ObjectsManager")
 ObjectsManager <- R6::R6Class(
   "ObjectsManager",
   inherit = GridManager,
+  
   private = list(
+    
+    diver_current_side = "left",
+    
     objects = list(
       diver = c(),
       shark = c(),
@@ -146,6 +150,16 @@ ObjectsManager <- R6::R6Class(
       private$points[[private$level]] <- private$points[[private$level]] + points
       shinyjs::runjs(glue("updateScore({private$points[[private$level]]});"))
       self$remove_trash(trash_collected,  private$objects$diver)
+    },
+    
+    get_image_name = function(object_name) {
+      if(object_name == "shark") {
+        return(private$level)
+      } else if(object_name == "diver") {
+        return(paste0("diver-", private$diver_current_side))
+      } else {
+        return(object_name)
+      }
     }
   ),
   public = list(
@@ -168,6 +182,12 @@ ObjectsManager <- R6::R6Class(
       }
     },
     
+    set_diver_side = function(direction) {
+      if(direction %in% c("left", "right")) {
+        private$diver_current_side <- direction
+      }
+    },
+    
     place_objects = function(level) {
       self$clean_it_all()
       shinyjs::runjs("runTimer(60);")
@@ -176,7 +196,8 @@ ObjectsManager <- R6::R6Class(
 
       self$add_on_grid(
         "diver",
-        private$prepare_grid_element_id(1, 2)
+        private$prepare_grid_element_id(1, 2),
+        image_name = private$get_image_name("diver")
       )
       self$add_on_grid(
         "boat",
@@ -253,10 +274,12 @@ ObjectsManager <- R6::R6Class(
         
         self$add_on_grid(
           object_name, new_location_id,
-          ifelse(object_name == "shark", private$level, object_name),
+          image_name = private$get_image_name(object_name),
           index = index
         )
-        private$rotate_element(new_location_id, direction)
+        if(object_name != "diver") {
+          private$rotate_element(new_location_id, direction)
+        }
       }
     },
     
@@ -295,6 +318,7 @@ ObjectsManager <- R6::R6Class(
         self$add_on_grid(
           "diver",
           private$objects$diver,
+          image_name = private$get_image_name("diver"),
           extra_content = glue("<p class=show-score-{trash_collected}>+{points}</p>")
         )
 
