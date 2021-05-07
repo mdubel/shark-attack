@@ -7,6 +7,7 @@ default:
     output: "www/css/sass.min.css"
   colors:
     success: "#41aa00"
+    navy: "navy"
   texts:
     gameOver: "You've tried hard, the planet is grateful for your sacrifice. Let's hope your followers will do better."
     gameSuccess: "Congratulations! The ocean is now... a little bit cleaner. Still a lot of work to do!"
@@ -18,8 +19,7 @@ default:
     link5: "https://www.nationalgeographic.com/science/article/150109-oceans-plastic-sea-trash-science-marine-debris"
   tutorial:
     1: "We made a terrible mess in the oceans! They are full of plastic and other waste, harming the marinal life and polluting the whole environment. Your goal today is to clean ocean a little bit. Every step matters for the planet earth!"
-    2: "Move your diver using ARROW KEYS. Swim onto trash pile to collect it."
-    3: "For each trash collected you will receive points. Check the current score in the top-left corner. Note that different types of trash are worth different amount of points, depending on the pollution they cause. BE CAREFUL! You only have oxygen supply for a one minute dive. Before the time pass you need to finish you eco-mission and go back to boat. Current time left can be viewed next to score."
-    4: "Fortunately there are still some plants alive in this junkyard! You want to preserve the sea life thus you cannot swim through the plants."
-    5: "BE CAREFUL! There are sharks swimming nearby. They do not realize that you are here to help, but they know that humans are responsible for all this trash in their habitat. And they are quite pissed of. Before starting the game you will need to select their anger level."
-    6: "Remember! To finish the game successfully and save the score you need to come back to boat before the time is up (and while you are still not beaten by the shark). Swim onto the boat to finish the game."
+    2: "Move your diver using ARROW KEYS. Swim onto trash pile to collect it. For each trash collected you will receive points. Check the current score in the bottom-right of the diver. Note that different types of trash are worth different amount of points, depending on the pollution they cause. BE CAREFUL! You only have oxygen supply for a one minute dive. Before the time pass you need to finish you eco-mission and go back to boat. Current time left can be viewed above the diver."
+    3: "Fortunately there are still some plants alive in this junkyard! You want to preserve the sea life thus you cannot swim through the plants."
+    4: "BE CAREFUL! There are sharks swimming nearby. They do not realize that you are here to help, but they know that humans are responsible for all this trash in their habitat. And they are quite pissed of. Before starting the game you will need to select their anger level."
+    5: "Remember! To finish the game successfully and save the score you need to come back to boat before the time is up (and while you are still not beaten by the shark). Swim onto the boat to finish the game."
