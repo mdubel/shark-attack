@@ -14,9 +14,11 @@ function updateTimer(time_in_sec) {
     seconds_left = time_in_sec - 60 * minutes_left;
     if(seconds_left < 10) {
       seconds_left = "0" + seconds_left;
+      $('#grid').css('border', '4px solid red');
       $('.ms-Persona-primaryText').css('color', 'red');
       $('.ms-Persona-primaryText').css('font-weight', 'bolder');
     } else {
+      $('#grid').css('border', 'none');
       $('.ms-Persona-primaryText').css('color', 'black');
       $('.ms-Persona-primaryText').css('font-weight', 'normal');
     }

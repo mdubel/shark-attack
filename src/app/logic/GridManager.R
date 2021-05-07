@@ -10,8 +10,8 @@ export("GridManager")
 GridManager <- R6::R6Class(
   "GridManager",
   private = list(
-    number_of_columns = 30,
-    number_of_rows = 15,
+    number_of_columns = 20,
+    number_of_rows = 10,
     
     single_grid_element = function(id) {
       div(
