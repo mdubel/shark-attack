@@ -198,7 +198,7 @@ ObjectsManager <- R6::R6Class(
         "diver",
         private$prepare_grid_element_id(1, 2),
         image_name = private$get_image_name("diver"),
-        extra_content = glue("<p class=timer>0:59</p>")
+        extra_content = glue("<p class=timer>0:59</p><p class=score>0</p>")
       )
       self$add_on_grid(
         "boat",
@@ -281,6 +281,8 @@ ObjectsManager <- R6::R6Class(
         )
         if(object_name != "diver") {
           private$rotate_element(new_location_id, direction)
+        } else {
+          shinyjs::runjs(glue("$('.diver').append('<p class=score>{private$points[[private$level]]}</p>');"))
         }
       }
     },

@@ -60,7 +60,7 @@ GridManager <- R6::R6Class(
       # Columns go first, that is how grid is organized, column-wise
       grid_elements_ids <- expand.grid(
         x = seq_len(private$number_of_columns),
-        y = c(0, seq_len(private$number_of_rows))
+        y = seq_len(private$number_of_rows)
       ) %>% {private$prepare_grid_element_id(id_col = .$x, id_row = .$y)}
       
       div(
@@ -68,7 +68,7 @@ GridManager <- R6::R6Class(
           "display: grid;
            grid-template-columns: repeat(%s, 1fr);
            grid-template-rows: repeat(%s, 1fr);",
-          private$number_of_columns, private$number_of_rows + 1
+          private$number_of_columns, private$number_of_rows
         ),
         class = "all-grid",
         lapply(grid_elements_ids, private$single_grid_element)

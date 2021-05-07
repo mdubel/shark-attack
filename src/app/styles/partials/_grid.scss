@@ -15,10 +15,10 @@
       position: absolute;
       &.timer {
         right: 5%;
-        &.hurry {
-          color: red;
-          font-weight: bolder;
-        }
+      }
+      &.score {
+        right: 5%;
+        bottom: 5%;
       }
       &.show-score-organic {
         font-size: 15px;
