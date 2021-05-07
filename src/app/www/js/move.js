@@ -36,6 +36,7 @@ function randomMove(object_name, object_count) {
       final_directions[i] = directions[random_direction];
     }
     Shiny.setInputValue(input_id, final_directions);
+    $('.plants').toggleClass('rotated');
   }, 500);
 }
 
