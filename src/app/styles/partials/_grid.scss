@@ -12,28 +12,28 @@
       opacity: 1;
       display: block;
       &.show-score-organic {
-        font-size: 20px;
-        color: $yellow;
+        font-size: 15px;
+        color: $yellow1;
       }
       &.show-score-glass {
         font-size: 20px;
-        color: $yellow;
+        color: $yellow2;
       }
       &.show-score-metal {
         font-size: 20px;
-        color: $yellow;
+        color: $yellow2;
       }
       &.show-score-electro {
-        font-size: 20px;
-        color: $yellow;
+        font-size: 25px;
+        color: $yellow3;
       }
       &.show-score-plastic {
-        font-size: 20px;
-        color: $yellow;
+        font-size: 25px;
+        color: $yellow3;
       }
       &.show-score-radio {
-        font-size: 20px;
-        color: $yellow;
+        font-size: 30px;
+        color: $yellow4;
       }
     }
     &.rotated {
