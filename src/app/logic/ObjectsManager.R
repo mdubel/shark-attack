@@ -12,7 +12,11 @@ export("ObjectsManager")
 ObjectsManager <- R6::R6Class(
   "ObjectsManager",
   inherit = GridManager,
+  
   private = list(
+    
+    diver_current_side = "left",
+    
     objects = list(
       diver = c(),
       shark = c(),
@@ -142,29 +146,59 @@ ObjectsManager <- R6::R6Class(
       shinyjs::runjs("updateScore('0');")
     },
   
-    update_score = function() {
-      trash_collected <- names(private$trash)[purrr::map_lgl(private$trash, ~private$objects$diver %in% .x)]
-      private$points[[private$level]] <- private$points[[private$level]] + private$trash_points[[trash_collected]]
+    update_score = function(trash_collected, points) {
+      private$points[[private$level]] <- private$points[[private$level]] + points
       shinyjs::runjs(glue("updateScore({private$points[[private$level]]});"))
       self$remove_trash(trash_collected,  private$objects$diver)
+    },
+    
+    get_image_name = function(object_name) {
+      if(object_name == "shark") {
+        return(private$level)
+      } else if(object_name == "diver") {
+        return(paste0("diver-", private$diver_current_side))
+      } else {
+        return(object_name)
+      }
     }
   ),
   public = list(
-    add_on_grid = function(object_name, location, image_name = object_name, index = 1, type = "objects") {
-      private$clean_grid(location)
+    #' Main function to place objects on grid element.
+    #'
+    #' @param object_name string; name of the object as listed on `objects` or `trash``
+    #' @param location string; grid unique id where to place
+    #' @param image_name string; name of the png from www/assets, if different than object_name
+    #' @param index numeric; for objects with multiple instances (e.g. sharks) index of object from that group
+    #' @param type string; which list of objects to use
+    #' @param extra_content string; HTML code that can be placed additionally on grid
+    #'
+    #' @return
+    add_on_grid = function(object_name, location, image_name = object_name, index = 1, type = "objects", extra_content = NULL) {
+      private$clean_locations(location)
       private[[type]][[object_name]][index] <- location
-      shinyjs::runjs(glue("$('#{location}').css('background-image', 'url(./assets/{image_name}.png)');"))
+      shinyjs::runjs(glue("$('#{location}').css('background-image', 'url(./assets/{image_name}.png)'); $('#{location}').addClass('{object_name}');"))
+      if(!is.null(extra_content)) {
+        shinyjs::runjs(glue("$('#{location}').append('{extra_content}');"))
+      }
+    },
+    
+    set_diver_side = function(direction) {
+      if(direction %in% c("left", "right")) {
+        private$diver_current_side <- direction
+      }
     },
     
     place_objects = function(level) {
       self$clean_it_all()
-      shinyjs::runjs("runTimer(60);")
+      shinyjs::runjs("runTimer(59);")
 
       private$level <- level
 
       self$add_on_grid(
         "diver",
-        private$prepare_grid_element_id(1, 2)
+        private$prepare_grid_element_id(1, 2),
+        image_name = private$get_image_name("diver"),
+        extra_content = glue("<p class=timer>0:59</p><p class=score>0</p>")
       )
       self$add_on_grid(
         "boat",
@@ -210,7 +244,7 @@ ObjectsManager <- R6::R6Class(
     check_shark_bite = function() {
       if(private$objects$diver %in% private$objects$shark) {
         shinyjs::runjs("stopMove();")
-        private$clean_grid(private$objects$diver)
+        private$clean_locations(private$objects$diver)
         self$add_on_grid("shark", private$objects$shark, private$level)
         return(TRUE)
       } else {
@@ -231,25 +265,30 @@ ObjectsManager <- R6::R6Class(
       }
     },
     
-    move_object = function(object_name, direction, index = 1) {
+    move_object = function(object_name, direction, index = 1, extra_content = NULL) {
       location <- private$objects[[object_name]][index]
       new_location <- private$get_new_location(location, direction)
       if(private$can_object_move(new_location) && private$can_object_pass(object_name, new_location)) {
-        private$clean_grid(location)
+        private$clean_locations(location)
         
         new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2])
         
         self$add_on_grid(
           object_name, new_location_id,
-          ifelse(object_name == "shark", private$level, object_name),
-          index = index
+          image_name = private$get_image_name(object_name),
+          index = index,
+          extra_content = extra_content
         )
-        private$rotate_element(new_location_id, direction)
+        if(object_name != "diver") {
+          private$rotate_element(new_location_id, direction)
+        } else {
+          shinyjs::runjs(glue("$('.diver').append('<p class=score>{private$points[[private$level]]}</p>');"))
+        }
       }
     },
     
     clean_it_all = function() {
-      shinyjs::runjs("$('.single-grid').css('background-image', 'none');")
+      private$clean_grid(".single-grid")
       shinyjs::runjs("stopMove();")
       purrr::walk(names(private$objects), function(object_name) private$objects[[object_name]] <- c())
       purrr::walk(names(private$trash), function(trash_name) private$trash[[trash_name]] <- c())
@@ -277,12 +316,12 @@ ObjectsManager <- R6::R6Class(
     
     check_collect = function() {
       if(length(private$occupied_trash()) > 0 && private$objects$diver %in% private$occupied_trash()) {
-        self$add_on_grid(
-          "diver",
-          private$objects$diver
-        )
+        trash_collected <- names(private$trash)[purrr::map_lgl(private$trash, ~private$objects$diver %in% .x)]
+        points <- private$trash_points[[trash_collected]]
+      
+        shinyjs::runjs(glue("$('.diver').append('<p class=show-score-{trash_collected}>+{points}</p>');"))
 
-        private$update_score()
+        private$update_score(trash_collected, points)
       }
     },
     
@@ -305,7 +344,7 @@ ObjectsManager <- R6::R6Class(
       new_location <- private$get_new_location(location, direction)
       if(private$can_object_move(new_location)) {
         if(private$can_trash_pass(new_location)) {
-          private$clean_grid(location)
+          private$clean_locations(location)
           new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2])
           
           self$add_on_grid(
@@ -318,7 +357,7 @@ ObjectsManager <- R6::R6Class(
           self$check_collect()
         }
       } else {
-        private$clean_grid(location)
+        private$clean_locations(location)
         self$remove_trash(trash_name, location)
       }
     },

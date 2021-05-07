@@ -10,8 +10,8 @@ export("GridManager")
 GridManager <- R6::R6Class(
   "GridManager",
   private = list(
-    number_of_columns = 30,
-    number_of_rows = 15,
+    number_of_columns = 20,
+    number_of_rows = 10,
     
     single_grid_element = function(id) {
       div(
@@ -41,10 +41,18 @@ GridManager <- R6::R6Class(
       }
     },
     
-    clean_grid = function(locations) {
+    clean_grid = function(selector) {
+      shinyjs::runjs(glue(
+        "$('{selector}').css('background-image', 'none').removeClass('rotated').html('').attr('class', 'single-grid');"
+      ))
+    },
+    
+    clean_locations = function(locations) {
       purrr::walk(
         locations, 
-        function(location) shinyjs::runjs(glue("$('#{location}').css('background-image', 'none'); $('#{location}').removeClass('rotated');"))
+        function(location) {
+          private$clean_grid(glue("#{location}"))
+        }
       )
     },
     
@@ -52,7 +60,7 @@ GridManager <- R6::R6Class(
       # Columns go first, that is how grid is organized, column-wise
       grid_elements_ids <- expand.grid(
         x = seq_len(private$number_of_columns),
-        y = c(0, seq_len(private$number_of_rows))
+        y = seq_len(private$number_of_rows)
       ) %>% {private$prepare_grid_element_id(id_col = .$x, id_row = .$y)}
       
       div(
@@ -60,7 +68,7 @@ GridManager <- R6::R6Class(
           "display: grid;
            grid-template-columns: repeat(%s, 1fr);
            grid-template-rows: repeat(%s, 1fr);",
-          private$number_of_columns, private$number_of_rows + 1
+          private$number_of_columns, private$number_of_rows
         ),
         class = "all-grid",
         lapply(grid_elements_ids, private$single_grid_element)

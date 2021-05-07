@@ -31,7 +31,8 @@ server <- function(input, output, session) {
   # MOVE OBJECTS ----
   observeEvent(input$diver_direction, {
     req(input$diver_direction != "clean")
-    ObjectsManager$move_object("diver", input$diver_direction)
+    ObjectsManager$set_diver_side(input$diver_direction)
+    ObjectsManager$move_object("diver", input$diver_direction, extra_content = glue("<p class=timer>{input$time_left}</p>"))
     
     if(ObjectsManager$check_shark_bite()) {
       session$userData$isBiteModalOpen(TRUE)
