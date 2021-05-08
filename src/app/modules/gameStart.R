@@ -33,6 +33,10 @@ server <- function(input, output, session, ObjectsManager, consts) {
             div(ShinyComponentWrapper(IconButton(ns("step_right"), iconProps = list(iconName = "ChevronRight"))), class = "arrow arrow--right"),
             class = "start-element start-element--tutorial"
           ),
+          div(
+            class = "start-element start-element--confirm",
+            ShinyComponentWrapper(PrimaryButton(ns("startGame"), text = "I understand, let's clean!"))
+          ),
           span(
             class = "start-element--levels",
             div(class = "level-icon--text", h4("Select difficulty to start the game")),
@@ -70,5 +74,9 @@ server <- function(input, output, session, ObjectsManager, consts) {
     if(step < length(consts$tutorial)) {
       updateSwatchColorPicker(session, "tutorial_step", as.character(step + 1))
     }
+  })
+  
+  observeEvent(input$startGame, {
+    shinyjs::runjs("$('.start-element--confirm').css('visibility', 'hidden'); $('.start-element--levels').css('visibility', 'visible');")
   })
 }
