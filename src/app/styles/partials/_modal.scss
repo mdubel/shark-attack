@@ -1,3 +1,13 @@
+.ms-Button {
+  &--icon {
+    color: $darkblue;
+  }
+  &--primary {
+    background-color: $darkblue;
+    border: $darkblue;
+  }
+}
+
 .modal-element {
   div {
     display: flex;
@@ -62,12 +72,12 @@
   padding: 20px;
   gap: 10px;
   .button-play {
-    grid-column: 3 / span 1;
+    grid-column: 2 / span 1;
     grid-row: 1 / span 1;
   }
 
   .button-learn {
-    grid-column: 2 / span 1;
+    grid-column: 3 / span 1;
     grid-row: 1 / span 1;
   }
   
@@ -205,18 +215,27 @@
       }
     }
     
+    &--confirm {
+      grid-column: 2 / span 1;
+      grid-row: 3 / span 1;
+    }
+    
     &--levels {
       grid-column: 2 / span 1;
       grid-row: 3 / span 1;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: 1fr 1fr;
+      visibility: hidden;
       
       .level-icon--text {
         grid-column: 1 / span 3;
         grid-row: 1 / span 1;
         justify-self: stretch;
         text-align: center;
+        h4 {
+          margin: 0;
+        }
       }
       .level-icon--easy {
         grid-column: 1 / span 1;
