@@ -91,7 +91,7 @@ ObjectsManager <- R6::R6Class(
     can_object_pass = function(object_name, new_location) {
       new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2]) 
       if(object_name == "shark") {
-        if(new_location_id %in% private$objects$plants || new_location_id == private$objects$boat || new_location_id %in% private$objects$shark || new_location_id %in% private$occupied_trash()) {
+        if(new_location_id %in% private$objects$plants || new_location_id == private$objects$boat || new_location_id %in% private$objects$shark || new_location_id %in% private$occupied_trash() || new_location_id %in% "1-2") {
           return(FALSE)
         } else {
           return(TRUE)
