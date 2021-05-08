@@ -3,7 +3,8 @@ server <- function(input, output, session) {
   # PREPARE GRID ----
   GridManager <- GridManager$new()
   ScoreManager <- ScoreManager$new()
-  ObjectsManager <- ObjectsManager$new(ScoreManager)
+  TrashManager <- TrashManager$new()
+  ObjectsManager <- ObjectsManager$new(ScoreManager, TrashManager)
   
   output$grid <- renderUI({
     GridManager$grid

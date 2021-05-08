@@ -6,7 +6,6 @@ import("shinyjs")
 import("glue")
 
 GridManager <- use("logic/GridManager.R")$GridManager
-ScoreManager <- use("logic/ScoreManager.R")$ScoreManager
 
 export("ObjectsManager")
 
@@ -143,14 +142,17 @@ ObjectsManager <- R6::R6Class(
     
     start_moving = function(countdown_time = 4) {
       timeout_time <- (countdown_time + 1) * 1000
-      shinyjs::runjs(glue("runCountdown({countdown_time})"))
-      shinyjs::runjs(glue("setTimeout(() => runTimer({private$timer}), {timeout_time});"))
-      shinyjs::runjs(glue("setTimeout(() => randomMove('shark', {private$number_of_sharks[[private$level]]}), {timeout_time});"))
+      shinyjs::runjs(glue(
+        "runCountdown({countdown_time});
+        setTimeout(() => runTimer({private$timer}), {timeout_time});
+        setTimeout(() => randomMove('shark', {private$number_of_sharks[[private$level]]}), {timeout_time});"
+      ))
     }
   ),
   public = list(
     
     score_manager = NULL,
+    trash_manager = NULL,
     
     #' Main function to place objects on grid element.
     #'
@@ -318,6 +320,7 @@ ObjectsManager <- R6::R6Class(
           iwalk(private$trash[[trash_name]], ~self$move_trash(trash_name, .x, sample(c("left", "down"), 1), .y))
         }
       )
+      # New trashes appear on two locations: last column and first row.
       self$place_trash(private$new_trash_count, c(private$number_of_columns, private$number_of_columns), 1:private$number_of_rows)
       self$place_trash(private$new_trash_count, 1:private$number_of_columns, c(1, 1))
     },
@@ -346,8 +349,9 @@ ObjectsManager <- R6::R6Class(
       }
     },
     
-    initialize = function(score_manager) {
+    initialize = function(score_manager, trash_manager) {
       self$score_manager <- score_manager
+      self$trash_manager <- trash_manager
     }
   )
 )
