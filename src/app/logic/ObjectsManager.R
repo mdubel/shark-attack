@@ -89,7 +89,8 @@ ObjectsManager <- R6::R6Class(
           return(TRUE)
         }
       } else if(object_name == "diver") {
-        if(new_location_id %in% private$objects$plants) {
+        # Block diver movement on boat while no trash is collected, to avoid unintended game ending.
+        if(new_location_id %in% private$objects$plants || (self$score_manager$get_scores(private$level)$current == 0 && new_location_id == private$objects$boat)) {
           return(FALSE)
         } else {
           return(TRUE)
