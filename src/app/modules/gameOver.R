@@ -57,24 +57,20 @@ server <- function(input, output, session, ObjectsManager, consts) {
       div(
         class = "scores-grid",
         div(
+          class = "scores-current-text",
+          consts$texts$currentScore
+        ),
+        div(
+          class = "scores-high-text",
+          consts$texts$highScore
+        ),
+        div(
           class = "scores-current-score",
           p(scores_list$current)
         ),
-        div(
-          class = "scores-easy-score",
-          p(scores_list$easy),
-          build_icon("easy")
-        ),
-        div(
-          class = "scores-medium-score",
-          p(scores_list$medium),
-          build_icon("medium")
-        ),
-        div(
-          class = "scores-hard-score",
-          p(scores_list$hard),
-          build_icon("hard")
-        )
+        build_level_score(scores_list, "easy"),
+        build_level_score(scores_list, "medium"),
+        build_level_score(scores_list, "hard")
       )
     )
   }
@@ -86,24 +82,34 @@ server <- function(input, output, session, ObjectsManager, consts) {
     )
   }
   
+  build_level_score <- function(scores_list, level) {
+    div(
+      class = glue("scores-{level}-score"),
+      p(scores_list[[level]]),
+      build_icon(level)
+    )
+  }
+  
   build_icon <- function(type) {
     div(div(img(src = glue("./assets/{type}.png"))), class = "modal-element modal-element--icon")
   }
   
   build_buttons <- function() {
-    tagList(
+    div(
+      class = "buttons-grid",
       div(
         ShinyComponentWrapper(PrimaryButton(ns("playAgain"), text = "Play Again!")),
-        class = "modal-element modal-element--play"
+        class = "modal-element button-play"
       ),
       div(
         ShinyComponentWrapper(PrimaryButton(ns("mainMenu"), text = "Back to Menu!")),
-        class = "modal-element modal-element--menu"
+        class = "modal-element button-menu"
       ),
       div(
         ShinyComponentWrapper(DefaultButton(ns("learnMore"), text = "Learn More!")),
-        class = "modal-element modal-element--learn"
-      )
+        class = "modal-element button-learn"
+      ),
+      div(consts$texts$modalFooter, class = "buttons-footer")
     )
   }
   

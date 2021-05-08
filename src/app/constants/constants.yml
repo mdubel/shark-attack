@@ -1,6 +1,4 @@
 default:
-  global:
-    counter_start_position: 0
   sass:
     input: "styles/main.scss"
     style: "compressed"
@@ -11,6 +9,9 @@ default:
   texts:
     gameOver: "You've tried hard, the planet is grateful for your sacrifice. Let's hope your followers will do better."
     gameSuccess: "Congratulations! The ocean is now... a little bit cleaner. Still a lot of work to do!"
+    modalFooter: "Application created with the help of Appsilon's shiny.fluent package. Join our AI4GOOD initiatives!"
+    currentScore: "Score this round:"
+    highScore: "Highscores so far:"
   links:
     link1: "https://www.conservation.org/stories/ocean-pollution-11-facts-you-need-to-know"
     link2: "https://www.noaa.gov/education/resource-collections/ocean-coasts/ocean-pollution"
