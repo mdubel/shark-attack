@@ -57,7 +57,7 @@ ObjectsManager <- R6::R6Class(
       new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2]) 
       if(object_name == "shark") {
         # Starting location added to avoid biting before the player even moves, very annoying.
-        if(new_location_id %in% setdiff(private$occupied_grids(), private$objects$diver) || new_location_id %in% self$trash_manager$occupied_trash(self$trash_manager$trash) || new_location_id == private$diver_start_location) {
+        if(new_location_id %in% setdiff(private$occupied_grids(private$objects), private$objects$diver) || new_location_id %in% self$trash_manager$occupied_trash(self$trash_manager$trash) || new_location_id == private$diver_start_location) {
           return(FALSE)
         } else {
           return(TRUE)
@@ -70,7 +70,7 @@ ObjectsManager <- R6::R6Class(
           return(TRUE)
         }
       } else if(object_name == "boat") {
-        if(new_location_id %in% c(private$occupied_grids(), self$trash_manager$occupied_trash(self$trash_manager$trash))) {
+        if(new_location_id %in% c(private$occupied_grids(private$objects), self$trash_manager$occupied_trash(self$trash_manager$trash))) {
           return(FALSE)
         } else {
           return(TRUE)
@@ -82,8 +82,8 @@ ObjectsManager <- R6::R6Class(
       private$get_grid_element_location(location) + private$get_move_vector(direction)
     },
     
-    occupied_grids = function() {
-      private$objects %>% unlist() %>% unname()
+    occupied_grids = function(objects_list) {
+      objects_list %>% unlist() %>% unname()
     },
     
     get_image_name = function(object_name) {
@@ -122,6 +122,7 @@ ObjectsManager <- R6::R6Class(
     add_on_grid = function(object_name, location, image_name = object_name, index = 1, extra_content = NULL) {
       private$clean_locations(location)
       private$objects[[object_name]][index] <- location
+      self$trash_manager$objects <- private$objects # Need to keep updated objects available for trash to know where they can move.
         
       self$place_image_on_grid(location, image_name, object_name, extra_content)
     },
@@ -163,7 +164,7 @@ ObjectsManager <- R6::R6Class(
             private$random_grid_location(
               2:private$number_of_columns,
               2:private$number_of_rows,
-              private$occupied_grids()
+              private$occupied_grids(private$objects)
             ),
             image_name = private$level,
             index = index
@@ -179,7 +180,7 @@ ObjectsManager <- R6::R6Class(
             private$random_grid_location(
               1:private$number_of_columns,
               2:private$number_of_rows,
-              private$occupied_grids()
+              private$occupied_grids(private$objects)
             ),
             index = index
           )

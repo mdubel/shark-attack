@@ -19,7 +19,7 @@ TrashManager <- R6::R6Class(
     
     can_trash_pass = function(new_location) {
       new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2])
-      if(new_location_id %in% c(private$occupied_grids(), self$occupied_trash(self$trash))) {
+      if(new_location_id %in% c(private$occupied_grids(self$objects), self$occupied_trash(self$trash))) {
         return(FALSE)
       } else {
         return(TRUE)
@@ -36,6 +36,8 @@ TrashManager <- R6::R6Class(
     trash_chances = NULL,
     trash_points = NULL,
     
+    objects = NULL,
+    
     occupied_trash = function(trash_list) {
       trash_list %>% unlist() %>% unname()
     },
@@ -50,7 +52,7 @@ TrashManager <- R6::R6Class(
             private$random_grid_location(
               col_range,
               row_range,
-              c(private$occupied_grids(), self$occupied_trash(self$trash))
+              c(private$occupied_grids(self$objects), self$occupied_trash(self$trash))
             ),
             index = length(self$trash[[trash_name]]) + 1
           )
