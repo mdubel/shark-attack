@@ -102,11 +102,11 @@ server <- function(input, output, session, ObjectsManager, consts) {
         class = "modal-element button-play"
       ),
       div(
-        ShinyComponentWrapper(PrimaryButton(ns("mainMenu"), text = "Back to Menu!")),
+        ShinyComponentWrapper(DefaultButton(ns("mainMenu"), text = "Back to Menu")),
         class = "modal-element button-menu"
       ),
       div(
-        ShinyComponentWrapper(DefaultButton(ns("learnMore"), text = "Learn More!")),
+        ShinyComponentWrapper(DefaultButton(ns("learnMore"), text = "Learn More")),
         class = "modal-element button-learn"
       ),
       div(consts$texts$modalFooter, class = "buttons-footer")
