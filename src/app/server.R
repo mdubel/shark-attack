@@ -2,7 +2,8 @@ server <- function(input, output, session) {
 
   # PREPARE GRID ----
   GridManager <- GridManager$new()
-  ObjectsManager <- ObjectsManager$new()
+  ScoreManager <- ScoreManager$new()
+  ObjectsManager <- ObjectsManager$new(ScoreManager)
   
   output$grid <- renderUI({
     GridManager$grid
@@ -59,10 +60,6 @@ server <- function(input, output, session) {
     # Move boat on 1/2 shark speed and only left or right.
     if(input$shark_direction[1] %in% c("left", "right")) {
       ObjectsManager$move_object("boat", input$shark_direction[1])
-      # In case boat swim onto diver.
-      if(ObjectsManager$check_success()) {
-        session$userData$isSuccessModalOpen(TRUE)
-      }
     }
     
     if(ObjectsManager$check_shark_bite()) {

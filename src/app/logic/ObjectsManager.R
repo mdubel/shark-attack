@@ -6,6 +6,7 @@ import("shinyjs")
 import("glue")
 
 GridManager <- use("logic/GridManager.R")$GridManager
+ScoreManager <- use("logic/ScoreManager.R")$ScoreManager
 
 export("ObjectsManager")
 
@@ -16,6 +17,7 @@ ObjectsManager <- R6::R6Class(
   private = list(
     
     diver_current_side = "left",
+    diver_start_location = "1-2",
     timer = "59",
     
     objects = list(
@@ -26,16 +28,6 @@ ObjectsManager <- R6::R6Class(
     ),
     
     level = NULL,
-    points = list(
-      easy = 0,
-      medium = 0,
-      hard = 0
-    ),
-    points_max = list(
-      easy = 0,
-      medium = 0,
-      hard = 0
-    ),
     
     number_of_plants = 20, 
     number_of_sharks = list(
@@ -92,19 +84,21 @@ ObjectsManager <- R6::R6Class(
     can_object_pass = function(object_name, new_location) {
       new_location_id <- private$prepare_grid_element_id(new_location[1], new_location[2]) 
       if(object_name == "shark") {
-        if(new_location_id %in% private$objects$plants || new_location_id == private$objects$boat || new_location_id %in% private$objects$shark || new_location_id %in% private$occupied_trash() || new_location_id %in% "1-2") {
+        # Starting location added to avoid biting before the player even moves, very annoying.
+        if(new_location_id %in% private$objects$plants || new_location_id == private$objects$boat || new_location_id %in% private$objects$shark || new_location_id %in% private$occupied_trash() || new_location_id == private$diver_start_location) {
           return(FALSE)
         } else {
           return(TRUE)
         }
       } else if(object_name == "diver") {
-        if(new_location_id %in% private$objects$plants) {
+        # Block diver movement on boat while no trash is collected, to avoid unintended game ending.
+        if(new_location_id %in% private$objects$plants || (self$score_manager$get_scores(private$level)$current == 0 && new_location_id == private$objects$boat)) {
           return(FALSE)
         } else {
           return(TRUE)
         }
       } else if(object_name == "boat") {
-        if(new_location_id %in% private$objects$plants || new_location_id %in% private$objects$shark || new_location_id %in% private$occupied_trash()) {
+        if(new_location_id %in% c(private$occupied_grids(), private$occupied_trash())) {
           return(FALSE)
         } else {
           return(TRUE)
@@ -137,22 +131,6 @@ ObjectsManager <- R6::R6Class(
       sample(names(private$trash_chances), 1, prob = unlist(private$trash_chances))
     },
     
-    set_scores = function() {
-      purrr::walk(names(private$points), function(level) {
-        if(private$points[[level]] > private$points_max[[level]]) {
-          private$points_max[[level]] <- private$points[[level]]
-        }
-        private$points[[level]] <- 0
-      })
-      shinyjs::runjs("updateScore('0');")
-    },
-  
-    update_score = function(trash_collected, points) {
-      private$points[[private$level]] <- private$points[[private$level]] + points
-      shinyjs::runjs(glue("updateScore({private$points[[private$level]]});"))
-      self$remove_trash(trash_collected,  private$objects$diver)
-    },
-    
     get_image_name = function(object_name) {
       if(object_name == "shark") {
         return(private$level)
@@ -171,6 +149,9 @@ ObjectsManager <- R6::R6Class(
     }
   ),
   public = list(
+    
+    score_manager = NULL,
+    
     #' Main function to place objects on grid element.
     #'
     #' @param object_name string; name of the object as listed on `objects` or `trash``
@@ -203,7 +184,7 @@ ObjectsManager <- R6::R6Class(
 
       self$add_on_grid(
         "diver",
-        private$prepare_grid_element_id(1, 2),
+        private$diver_start_location,
         image_name = private$get_image_name("diver"),
         extra_content = glue("<p class=timer>0:{private$timer}</p><p class=score>0</p>")
       )
@@ -272,6 +253,14 @@ ObjectsManager <- R6::R6Class(
       }
     },
     
+    check_collect = function() {
+      if(length(private$occupied_trash()) > 0 && private$objects$diver %in% private$occupied_trash()) {
+        trash_collected <- names(private$trash)[purrr::map_lgl(private$trash, ~private$objects$diver %in% .x)]
+        self$score_manager$update_score(private$trash_points, trash_collected, private$level)
+        self$remove_trash(trash_collected,  private$objects$diver)
+      }
+    },
+    
     move_object = function(object_name, direction, index = 1, extra_content = NULL) {
       location <- private$objects[[object_name]][index]
       new_location <- private$get_new_location(location, direction)
@@ -289,7 +278,8 @@ ObjectsManager <- R6::R6Class(
         if(object_name != "diver") {
           private$rotate_element(new_location_id, direction)
         } else {
-          shinyjs::runjs(glue("$('.diver').append('<p class=score>{private$points[[private$level]]}</p>');"))
+          current_points <- self$score_manager$get_scores(private$level)$current
+          shinyjs::runjs(glue("$('.diver').append('<p class=score>{current_points}</p>');"))
         }
       }
     },
@@ -299,7 +289,7 @@ ObjectsManager <- R6::R6Class(
       shinyjs::runjs("stopMove();")
       purrr::walk(names(private$objects), function(object_name) private$objects[[object_name]] <- c())
       purrr::walk(names(private$trash), function(trash_name) private$trash[[trash_name]] <- c())
-      private$set_scores()
+      self$score_manager$reset_scores()
     },
     
     place_trash = function(count = private$initial_trash_count, col_range = 1:private$number_of_columns, row_range = 1:private$number_of_rows) {
@@ -319,17 +309,6 @@ ObjectsManager <- R6::R6Class(
           )
         }
       )
-    },
-    
-    check_collect = function() {
-      if(length(private$occupied_trash()) > 0 && private$objects$diver %in% private$occupied_trash()) {
-        trash_collected <- names(private$trash)[purrr::map_lgl(private$trash, ~private$objects$diver %in% .x)]
-        points <- private$trash_points[[trash_collected]]
-      
-        shinyjs::runjs(glue("$('.diver').append('<p class=show-score-{trash_collected}>+{points}</p>');"))
-
-        private$update_score(trash_collected, points)
-      }
     },
     
     move_all_trash = function() {
@@ -360,8 +339,6 @@ ObjectsManager <- R6::R6Class(
             index = index,
             type = "trash"
           )
-          
-          self$check_collect()
         }
       } else {
         private$clean_locations(location)
@@ -369,19 +346,8 @@ ObjectsManager <- R6::R6Class(
       }
     },
     
-    get_scores = function() {
-      if(is.null(private$level)) {
-        return(list())
-      }
-      list(
-        current = as.character(private$points[[private$level]]),
-        easy = as.character(private$points_max$easy),
-        medium = as.character(private$points_max$medium),
-        hard = as.character(private$points_max$hard)
-      )
-    },
-    
-    initialize = function() {
+    initialize = function(score_manager) {
+      self$score_manager <- score_manager
     }
   )
 )

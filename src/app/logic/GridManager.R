@@ -57,7 +57,7 @@ GridManager <- R6::R6Class(
     },
     
     create_grid = function() {
-      # Columns go first, that is how grid is organized, column-wise
+      # Columns go first, that is how grid is organized, column-wise.
       grid_elements_ids <- expand.grid(
         x = seq_len(private$number_of_columns),
         y = seq_len(private$number_of_rows)
@@ -83,6 +83,7 @@ GridManager <- R6::R6Class(
       }
     }
   ),
+  
   public = list(
     grid = NULL,
     initialize = function() {
