@@ -16,6 +16,7 @@ ObjectsManager <- R6::R6Class(
   private = list(
     
     diver_current_side = "left",
+    timer = "59",
     
     objects = list(
       diver = c(),
@@ -160,6 +161,13 @@ ObjectsManager <- R6::R6Class(
       } else {
         return(object_name)
       }
+    },
+    
+    start_moving = function(countdown_time = 3) {
+      timeout_time <- (countdown_time + 1) * 1000
+      shinyjs::runjs(glue("runCountdown({countdown_time})"))
+      shinyjs::runjs(glue("setTimeout(() => runTimer({private$timer}), {timeout_time});"))
+      shinyjs::runjs(glue("setTimeout(() => randomMove('shark', {private$number_of_sharks[[private$level]]}), {timeout_time});"))
     }
   ),
   public = list(
@@ -190,7 +198,6 @@ ObjectsManager <- R6::R6Class(
     
     place_objects = function(level) {
       self$clean_it_all()
-      shinyjs::runjs("runTimer(59);")
 
       private$level <- level
 
@@ -198,7 +205,7 @@ ObjectsManager <- R6::R6Class(
         "diver",
         private$prepare_grid_element_id(1, 2),
         image_name = private$get_image_name("diver"),
-        extra_content = glue("<p class=timer>0:59</p><p class=score>0</p>")
+        extra_content = glue("<p class=timer>0:{private$timer}</p><p class=score>0</p>")
       )
       self$add_on_grid(
         "boat",
@@ -238,7 +245,7 @@ ObjectsManager <- R6::R6Class(
       
       self$place_trash()
       
-      shinyjs::runjs(glue("randomMove('shark', {private$number_of_sharks[[private$level]]});"))
+      private$start_moving()
     },
     
     check_shark_bite = function() {

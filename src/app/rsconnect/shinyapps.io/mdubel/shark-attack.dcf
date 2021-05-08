@@ -5,9 +5,9 @@ account: mdubel
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 4076895
-bundleId: 4570756
+bundleId: 4573854
 url: https://mdubel.shinyapps.io/shark-attack/
-when: 1620403660.44961
-lastSyncTime: 1620403660.44962
+when: 1620470987.38296
+lastSyncTime: 1620470987.38297
 asMultiple: FALSE
 asStatic: FALSE

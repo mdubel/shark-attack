@@ -56,8 +56,10 @@ server <- function(input, output, session) {
       ObjectsManager$move_all_trash()
     }
     
+    # Move boat on 1/2 shark speed and only left or right.
     if(input$shark_direction[1] %in% c("left", "right")) {
       ObjectsManager$move_object("boat", input$shark_direction[1])
+      # In case boat swim onto diver.
       if(ObjectsManager$check_success()) {
         session$userData$isSuccessModalOpen(TRUE)
       }
