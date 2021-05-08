@@ -55,7 +55,7 @@ server <- function(input, output, session) {
     
     # Move trash on average on 1/4 shark move.
     if(input$shark_direction[1] == "up") {
-      ObjectsManager$move_all_trash()
+      ObjectsManager$trash_manager$move_all_trash()
     }
     
     # Move boat on 1/2 shark speed and only left or right.
