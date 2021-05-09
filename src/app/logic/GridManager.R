@@ -28,6 +28,8 @@ GridManager <- R6::R6Class(
       strsplit(grid_id, "-") %>% unlist() %>% as.numeric()
     },
     
+    # Crucial function for preparing starting grid elements: it is required to be sure that every object is placed,
+    # thus if the one location is already occupied the function tries to find a good spot until success.
     random_grid_location = function(column_range, row_range, occupied_grids) {
       location <- private$prepare_grid_element_id(
         sample(column_range, 1),

@@ -60,6 +60,8 @@ TrashManager <- R6::R6Class(
       )
     },
     
+    # Trash goes with the water flow from right to left and from surface to the seafloor.
+    # All trash moves together, but each in it's own independent direction.
     move_all_trash = function() {
       purrr::walk(
         names(self$trash),
@@ -76,11 +78,11 @@ TrashManager <- R6::R6Class(
       self$trash[[trash_name]] <- setdiff(self$trash[[trash_name]], location)
     },
     
-    add_trash_on_grid = function(trash_name, location, image_name = trash_name, index = 1, extra_content = NULL) {
+    add_trash_on_grid = function(trash_name, location, index = 1) {
       private$clean_locations(location)
       self$trash[[trash_name]][index] <- location
       
-      self$place_image_on_grid(location, image_name, trash_name, extra_content)
+      self$place_image_on_grid(location, trash_name)
     },
     
     move_trash = function(trash_name, location, direction, index = 1) {
@@ -97,6 +99,7 @@ TrashManager <- R6::R6Class(
           )
         }
       } else {
+        # Once trash moves outside the grid it is considered as not collected and lost in the oceans depth.
         private$clean_locations(location)
         self$remove_trash(trash_name, location)
       }

@@ -22,7 +22,3 @@ function updateTimer(time_in_sec) {
     Shiny.setInputValue("time_left", time_left);
     $('.timer').text(time_left);
 }
-
-function updateScore(score) {
-  $('.ms-Persona-initials > span').text(score);
-}
