@@ -31,7 +31,6 @@ ScoreManager <- R6::R6Class(
         }
         private$points[[level]] <- 0
       })
-      shinyjs::runjs("updateScore('0');")
     },
     
     update_score = function(trash_points, trash_collected, level) {
@@ -39,7 +38,6 @@ ScoreManager <- R6::R6Class(
       private$points[[level]] <- private$points[[level]] + points
       
       shinyjs::runjs(glue("$('.diver').append('<p class=show-score-{trash_collected}>+{points}</p>');"))
-      shinyjs::runjs(glue("updateScore({private$points[[level]]});"))
     },
     
     get_scores = function(level) {
