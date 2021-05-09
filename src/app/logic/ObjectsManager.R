@@ -114,7 +114,7 @@ ObjectsManager <- R6::R6Class(
     
     #' Main function to place objects on grid element.
     #'
-    #' @param object_name string; name of the object as listed on `objects` or `trash``
+    #' @param object_name string; name of the object as listed on `objects`
     #' @param location string; grid unique id where to place
     #' @param image_name string; name of the png from www/assets, if different than object_name
     #' @param index numeric; for objects with multiple instances (e.g. sharks) index of object from that group
@@ -123,10 +123,15 @@ ObjectsManager <- R6::R6Class(
     #' @return
     add_on_grid = function(object_name, location, image_name = object_name, index = 1, extra_content = NULL) {
       private$clean_locations(location)
-      private$objects[[object_name]][index] <- location
-      self$trash_manager$objects <- private$objects # Need to keep updated objects available for trash to know where they can move.
+      
+      self$save_object_location(object_name, location, index)
         
       self$place_image_on_grid(location, object_name, image_name, extra_content)
+    },
+    
+    save_object_location = function(object_name, location, index = 1) {
+      private$objects[[object_name]][index] <- location
+      self$trash_manager$objects <- private$objects # Need to keep updated objects available for trash to know where they can move.
     },
     
     place_image_on_grid = function(location, object_name, image_name = object_name, extra_content = NULL) {
