@@ -25,3 +25,4 @@ GridManager <- use("logic/GridManager.R")$GridManager
 ObjectsManager <- use("logic/ObjectsManager.R")$ObjectsManager
 ScoreManager <- use("logic/ScoreManager.R")$ScoreManager
 TrashManager <- use("logic/TrashManager.R")$TrashManager
+LeaderboardManager <- use("logic/LeaderboardManager.R")$LeaderboardManager

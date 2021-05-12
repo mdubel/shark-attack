@@ -11,30 +11,12 @@ ui <- function(id) {
   reactOutput(ns("endModal"))
 }
 
-init_server <- function(id, ObjectsManager, consts) {
-  callModule(server, id, ObjectsManager, consts)
+init_server <- function(id, ObjectsManager, LeaderboardManager, consts) {
+  callModule(server, id, ObjectsManager, LeaderboardManager, consts)
 }
 
-server <- function(input, output, session, ObjectsManager, consts) {
+server <- function(input, output, session, ObjectsManager, LeaderboardManager, consts) {
   ns <- session$ns
-  
-  # LEADERBOARD ----
-  gs4_auth(path = "googlesheets_serviceaccount.json")
-  LEADERBOARD_ID <- "1eMgZAKkuPc1o4ZM39xQprDj97UulIhIgjdtN7Dvxuv0"
-  
-  save_data_gsheets <- function(nick, level, score) {
-    data <- data.frame(nick = nick, level = level, score = score)
-    sheet_append(LEADERBOARD_ID, data)
-  }
-  
-  load_data_gsheets <- function() {
-    read_sheet(LEADERBOARD_ID)
-  }
-  
-  get_leaderboard <- function(level) {
-    read_sheet(LEADERBOARD_ID) %>% 
-      dplyr::filter()
-  }
   
   # MODAL ----
   output$endModal <- renderReact({
@@ -128,11 +110,6 @@ server <- function(input, output, session, ObjectsManager, consts) {
   # BUTTONS ----
   observeEvent(input$learnMore, {
     purrr::walk(consts$links, ~open_in_new_tab(.x))
-# save_data_gsheets(
-#   "ala ma kota",
-#   session$userData$level,
-#   as.numeric(ObjectsManager$score_manager$get_scores(session$userData$level)$current)
-# )
   })
   
   open_in_new_tab <- function(url) {

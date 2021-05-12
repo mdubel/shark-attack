@@ -5,6 +5,7 @@ server <- function(input, output, session) {
   ScoreManager <- ScoreManager$new()
   TrashManager <- TrashManager$new()
   ObjectsManager <- ObjectsManager$new(ScoreManager, TrashManager)
+  LeaderboardManager <- LeaderboardManager$new()
   
   output$grid <- renderUI({
     GridManager$grid
@@ -84,5 +85,5 @@ server <- function(input, output, session) {
   session$userData$isBiteModalOpen <- reactiveVal(FALSE)
   session$userData$isSuccessModalOpen <- reactiveVal(FALSE)
   
-  gameOver$init_server("gameOver", ObjectsManager, consts)
+  gameOver$init_server("gameOver", ObjectsManager, LeaderboardManager, consts)
 }
