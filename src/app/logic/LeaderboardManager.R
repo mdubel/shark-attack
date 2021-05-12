@@ -1,5 +1,6 @@
 import("R6")
 import("dplyr")
+import("utils")
 import("googlesheets4")
 
 export("LeaderboardManager")

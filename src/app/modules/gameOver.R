@@ -2,6 +2,7 @@ import("shiny")
 import("shinyjs")
 import("shiny.fluent")
 import("glue")
+import("purrr")
 import("googlesheets4")
 
 export("ui", "init_server")
@@ -37,6 +38,7 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
           build_text(text),
           build_scores_table(scores),
           build_icon(icon_name, "modal-element--icon"),
+          build_leaderboard(session$userData$level, scores$current, ask = is_success || is_failure),
           build_buttons()
         )
       )
@@ -106,8 +108,60 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
     )
   }
   
+  build_submit <- function(leaderboard, score) {
+    if(score == "X" || as.numeric(score) <= min(leaderboard$score)) {
+      div(consts$texts$noHighScore)
+    } else {
+      div(
+        ShinyComponentWrapper(TextField(ns("nick"), label = "Save your highscore to leaderboard")),
+        ShinyComponentWrapper(PrimaryButton(ns("submit"), text = "Submit")),
+        class = "modal-element button-nick"
+      )
+    }
+  }
+  
+  build_leaderboard <- function(level, score, ask = TRUE) {
+    if(ask) {
+      leaderboard <- LeaderboardManager$get_leaderboard(level)
+      div(
+        class = "modal-element modal-element--leaderboard",
+        div(
+          class = "leaderboard-grid",
+          build_submit(leaderboard, score),
+          div(
+            p(glue("Overall leaderboard for {level} level:")),
+            build_icon(level, "image-small"),
+            # dataTableOutput(
+            #   renderDataTable(
+            #     leaderboard
+            #   )
+            #),
+            # purrr::map(
+            #   1:nrow(leaderboard),
+            #   function(row_index) {
+            #     div(paste0(row_index, ". ", paste(leaderboard[row_index, ], collapse = " ")))
+            #   }
+            # ),
+            class = "modal-element table-leaderboard"
+          )
+        )
+      )
+    } else {
+      NULL
+    }
+  }
+  
   
   # BUTTONS ----
+  observeEvent(input$submit, {
+    req(input$nick != "")
+    LeaderboardManager$save_to_leaderboard(
+      input$nick,
+      session$userData$level,
+      as.numeric(ObjectsManager$score_manager$get_scores(session$userData$level)$current)
+    )
+  })
+  
   observeEvent(input$learnMore, {
     purrr::walk(consts$links, ~open_in_new_tab(.x))
   })
