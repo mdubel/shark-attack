@@ -40,12 +40,12 @@ ScoreManager <- R6::R6Class(
       shinyjs::runjs(glue("$('.diver').append('<p class=show-score-{trash_collected}>+{points}</p>');"))
     },
     
-    get_scores = function(level) {
+    get_scores = function(level, is_failure = FALSE) {
       if(is.null(level)) {
         return(list())
       }
       list(
-        current = as.character(private$points[[level]]),
+        current = ifelse(is_failure, "X", as.character(private$points[[level]])),
         easy = as.character(private$points_max$easy),
         medium = as.character(private$points_max$medium),
         hard = as.character(private$points_max$hard)

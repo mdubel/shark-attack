@@ -8,10 +8,7 @@ export("ui", "init_server")
 
 ui <- function(id) {
   ns <- NS(id)
-  tagList(
-    reactOutput(ns("biteModal")),
-    reactOutput(ns("successModal"))
-  )
+  reactOutput(ns("endModal"))
 }
 
 init_server <- function(id, ObjectsManager, consts) {
@@ -34,34 +31,30 @@ server <- function(input, output, session, ObjectsManager, consts) {
     read_sheet(LEADERBOARD_ID)
   }
   
+  get_leaderboard <- function(level) {
+    read_sheet(LEADERBOARD_ID) %>% 
+      dplyr::filter()
+  }
   
-  # FAIL ----
-  output$biteModal <- renderReact({
+  # MODAL ----
+  output$endModal <- renderReact({
+    is_success <- session$userData$isSuccessModalOpen()
+    is_failure <- session$userData$isBiteModalOpen()
+    
+    text <- ifelse(is_failure, consts$texts$gameOver, consts$texts$gameSuccess)
+    icon_name <- ifelse(is_failure, "failure", "success")
+    scores <- ObjectsManager$score_manager$get_scores(session$userData$level, is_failure)
+    
     reactWidget(
       Modal(
         className = "modal",
-        isOpen = session$userData$isBiteModalOpen(), isBlocking = FALSE,
+        isOpen = is_success || is_failure,
+        isBlocking = FALSE,
         div(
-          class = "failure-grid",
-          build_text(consts$texts$gameOver),
-          build_icon("failure"),
-          build_buttons()
-        )
-      )
-    )
-  })
-  
-  # SUCCESS ----
-  output$successModal <- renderReact({
-    reactWidget(
-      Modal(
-        className = "modal",
-        isOpen = session$userData$isSuccessModalOpen(), isBlocking = FALSE,
-        div(
-          class = "success-grid",
-          build_text(consts$texts$gameSuccess),
-          build_scores_table(ObjectsManager$score_manager$get_scores(session$userData$level)),
-          build_icon("success"),
+          class = "end-grid",
+          build_text(text),
+          build_scores_table(scores),
+          build_icon(icon_name, "modal-element--icon"),
           build_buttons()
         )
       )
@@ -108,8 +101,8 @@ server <- function(input, output, session, ObjectsManager, consts) {
     )
   }
   
-  build_icon <- function(type) {
-    div(div(img(src = glue("./assets/{type}.png"))), class = "modal-element modal-element--icon")
+  build_icon <- function(type, class = "") {
+    div(div(img(src = glue("./assets/{type}.png"))), class = paste("modal-element", class))
   }
   
   build_buttons <- function() {
@@ -134,8 +127,12 @@ server <- function(input, output, session, ObjectsManager, consts) {
   
   # BUTTONS ----
   observeEvent(input$learnMore, {
-    #purrr::walk(consts$links, ~open_in_new_tab(.x))
-    save_data_gsheets("ala ma kota", session$userData$level, ObjectsManager$score_manager$get_scores(session$userData$level)$current)
+    purrr::walk(consts$links, ~open_in_new_tab(.x))
+# save_data_gsheets(
+#   "ala ma kota",
+#   session$userData$level,
+#   as.numeric(ObjectsManager$score_manager$get_scores(session$userData$level)$current)
+# )
   })
   
   open_in_new_tab <- function(url) {

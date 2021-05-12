@@ -26,29 +26,18 @@
     grid-row: 2 / span 1;
     img {
       width: 150px;
+      right: 10px;
+      top: 10px;
+      opacity: 20%;
+      position: absolute;
     }
   }
 }
 
-.failure-grid {
+.end-grid {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 120px 150px 100px;
-  padding: 20px;
-  gap: 10px;
-  
-  .modal-element {
-    &--buttons {
-      grid-column: 1 / span 1;
-      grid-row: 3 / span 1;
-    }
-  }
-}
-
-.success-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 50px 150px 100px 100px;
+  grid-template-rows: 50px 15px 100px 100px;
   padding: 20px;
   gap: 10px;
   
@@ -253,12 +242,7 @@
   }
 }
 
-// TODO modify selector
-#gameOver-biteModal {
-  position: fixed;
-}
-
-#gameOver-successModal {
+#gameOver-endModal {
   position: fixed;
 }
 
