@@ -5,6 +5,7 @@ library(config)
 library(sass)
 library(shinyjs)
 library(glue)
+library(googlesheets4)
 
 consts <- config::get(file = "constants/constants.yml")
 
