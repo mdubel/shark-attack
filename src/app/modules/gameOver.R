@@ -2,6 +2,7 @@ import("shiny")
 import("shinyjs")
 import("shiny.fluent")
 import("glue")
+import("googlesheets4")
 
 export("ui", "init_server")
 
@@ -20,6 +21,21 @@ init_server <- function(id, ObjectsManager, consts) {
 server <- function(input, output, session, ObjectsManager, consts) {
   ns <- session$ns
   
+  # LEADERBOARD ----
+  gs4_auth(path = "googlesheets_serviceaccount.json")
+  LEADERBOARD_ID <- "1eMgZAKkuPc1o4ZM39xQprDj97UulIhIgjdtN7Dvxuv0"
+  
+  save_data_gsheets <- function(nick, level, score) {
+    data <- data.frame(nick = nick, level = level, score = score)
+    sheet_append(LEADERBOARD_ID, data)
+  }
+  
+  load_data_gsheets <- function() {
+    read_sheet(LEADERBOARD_ID)
+  }
+  
+  
+  # FAIL ----
   output$biteModal <- renderReact({
     reactWidget(
       Modal(
@@ -35,6 +51,7 @@ server <- function(input, output, session, ObjectsManager, consts) {
     )
   })
   
+  # SUCCESS ----
   output$successModal <- renderReact({
     reactWidget(
       Modal(
@@ -51,6 +68,7 @@ server <- function(input, output, session, ObjectsManager, consts) {
     )
   })
   
+  # CONTENT ----
   build_scores_table <- function(scores_list) {
     div(
       class = "modal-element modal-element--scores",
@@ -113,13 +131,16 @@ server <- function(input, output, session, ObjectsManager, consts) {
     )
   }
   
+  
+  # BUTTONS ----
+  observeEvent(input$learnMore, {
+    #purrr::walk(consts$links, ~open_in_new_tab(.x))
+    save_data_gsheets("ala ma kota", session$userData$level, ObjectsManager$score_manager$get_scores(session$userData$level)$current)
+  })
+  
   open_in_new_tab <- function(url) {
     shinyjs::runjs(glue("window.open('{url}', '_blank');"))
   }
-  
-  observeEvent(input$learnMore, {
-    purrr::walk(consts$links, ~open_in_new_tab(.x))
-  })
   
   observeEvent(input$mainMenu, {
     session$userData$isBiteModalOpen(FALSE)
