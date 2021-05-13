@@ -21,7 +21,9 @@ LeaderboardManager <- R6::R6Class(
       read_sheet(private$leaderboard_id) %>% 
         dplyr::filter(level == level) %>% 
         dplyr::arrange(desc(score)) %>% 
-        head(10L)
+        dplyr::select(!level) %>% 
+        head(10L) %>% 
+        tibble::rowid_to_column("#")
     },
     
     save_to_leaderboard = function(nick, level, score) {

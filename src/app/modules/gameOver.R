@@ -45,6 +45,28 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
     )
   })
   
+  leaderboard <- reactive({
+    LeaderboardManager$get_leaderboard(session$userData$level)
+  })
+  
+  output$leaderboardPartOne <- renderDataTable(
+    leaderboard()[1:5,],
+    options = list(
+      dom = "t",
+      searching = FALSE,
+      ordering = FALSE
+    )
+  )
+  output$leaderboardPartTwo <- renderDataTable(
+    leaderboard()[6:10,],
+    options = list(
+      dom = "t",
+      searching = FALSE,
+      ordering = FALSE
+    )
+  )
+  
+  
   # CONTENT ----
   build_scores_table <- function(scores_list) {
     div(
@@ -122,26 +144,16 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
   
   build_leaderboard <- function(level, score, ask = TRUE) {
     if(ask) {
-      leaderboard <- LeaderboardManager$get_leaderboard(level)
       div(
         class = "modal-element modal-element--leaderboard",
         div(
           class = "leaderboard-grid",
-          build_submit(leaderboard, score),
+          build_submit(leaderboard(), score),
           div(
             p(glue("Overall leaderboard for {level} level:")),
             build_icon(level, "image-small"),
-            # dataTableOutput(
-            #   renderDataTable(
-            #     leaderboard
-            #   )
-            #),
-            # purrr::map(
-            #   1:nrow(leaderboard),
-            #   function(row_index) {
-            #     div(paste0(row_index, ". ", paste(leaderboard[row_index, ], collapse = " ")))
-            #   }
-            # ),
+            dataTableOutput(session$ns("leaderboardPartOne")),
+            dataTableOutput(session$ns("leaderboardPartTwo")),
             class = "modal-element table-leaderboard"
           )
         )
