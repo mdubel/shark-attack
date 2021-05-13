@@ -38,7 +38,7 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
           build_text(text),
           build_scores_table(scores),
           build_icon(icon_name, "modal-element--icon"),
-          build_leaderboard(session$userData$level(), scores$current, ask = is_success || is_failure),
+          build_leaderboard(leaderboard(), session$userData$level(), scores$current, ask = is_success || is_failure),
           build_buttons()
         )
       )
@@ -72,12 +72,17 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
     )
   )
   
-  output$submit_button <- renderUI({
-    ShinyComponentWrapper(PrimaryButton(ns("submit"), text = "Submit", disabled = is_submit_disabled()))
+  observeEvent(is_submit_disabled(), {
+    if(is_submit_disabled()) {
+      shinyjs::addClass(id = "submit", class = "hidden")
+    } else {
+      shinyjs::removeClass(id = "submit", class = "hidden")
+    }
   })
   
   observeEvent(input$nick, {
     if(input$nick == "" || is_submit_clicked()) {
+      shinyjs::addClass(id = "submit", class = "hidden")
       is_submit_disabled(TRUE)
     } else {
       is_submit_disabled(FALSE)
@@ -152,24 +157,24 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
   })
   
   build_submit <- function(leaderboard, score) {
-    if(score == "X" || (length(leaderboard$score) > 10 && as.numeric(score) <= min(leaderboard$score))) {
+    if(score == "X" || (length(leaderboard$score) == 10 && as.numeric(score) < min(leaderboard$score))) {
       div(consts$texts$noHighScore)
     } else {
       div(
         ShinyComponentWrapper(TextField(ns("nick"), label = "Save your highscore to leaderboard")),
-        uiOutput(ns("submit_button")),
+        ShinyComponentWrapper(PrimaryButton(ns("submit"), text = "Submit")),
         class = "modal-element button-nick"
       )
     }
   }
   
-  build_leaderboard <- function(level, score, ask = TRUE) {
+  build_leaderboard <- function(leaderboard, level, score, ask = TRUE) {
     if(ask) {
       div(
         class = "modal-element modal-element--leaderboard",
         div(
           class = "leaderboard-grid",
-          build_submit(leaderboard(), score),
+          build_submit(leaderboard, score),
           div(
             p(glue("Overall leaderboard for {level} level:")),
             build_icon(level, "image-small"),
@@ -200,7 +205,6 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
   
   observeEvent(input$learnMore, {
     purrr::walk(consts$links, ~open_in_new_tab(.x))
-    is_submit_clicked(FALSE)
   })
   
   open_in_new_tab <- function(url) {

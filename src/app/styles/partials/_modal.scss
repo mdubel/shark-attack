@@ -184,6 +184,10 @@
   }
 }
 
+.hidden {
+  visibility: hidden;
+}
+
 .start-grid {
   display: grid;
   grid-template-columns: 80px 300px 80px;
