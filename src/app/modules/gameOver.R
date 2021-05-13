@@ -26,7 +26,7 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
     
     text <- ifelse(is_failure, consts$texts$gameOver, consts$texts$gameSuccess)
     icon_name <- ifelse(is_failure, "failure", "success")
-    scores <- ObjectsManager$score_manager$get_scores(session$userData$level, is_failure)
+    scores <- ObjectsManager$score_manager$get_scores(session$userData$level(), is_failure)
     
     reactWidget(
       Modal(
@@ -38,7 +38,7 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
           build_text(text),
           build_scores_table(scores),
           build_icon(icon_name, "modal-element--icon"),
-          build_leaderboard(session$userData$level, scores$current, ask = is_success || is_failure),
+          build_leaderboard(session$userData$level(), scores$current, ask = is_success || is_failure),
           build_buttons()
         )
       )
@@ -48,10 +48,11 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
   # LEADERBOARD ----
   leaderboard_trigger <- reactiveVal(0)
   is_submit_disabled <- reactiveVal(TRUE)
+  is_submit_clicked <- reactiveVal(FALSE)
   
   leaderboard <- reactive({
     leaderboard_trigger()
-    LeaderboardManager$get_leaderboard(session$userData$level)
+    LeaderboardManager$get_leaderboard(session$userData$level())
   })
   
   output$leaderboardPartOne <- renderDataTable(
@@ -76,10 +77,10 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
   })
   
   observeEvent(input$nick, {
-    if(input$nick != "") {
-      is_submit_disabled(FALSE)
-    } else {
+    if(input$nick == "" || is_submit_clicked()) {
       is_submit_disabled(TRUE)
+    } else {
+      is_submit_disabled(FALSE)
     }
   })
   
@@ -185,15 +186,17 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
     req(input$nick != "")
     LeaderboardManager$save_to_leaderboard(
       input$nick,
-      session$userData$level,
-      as.numeric(ObjectsManager$score_manager$get_scores(session$userData$level)$current)
+      session$userData$level(),
+      as.numeric(ObjectsManager$score_manager$get_scores(session$userData$level())$current)
     )
     leaderboard_trigger(leaderboard_trigger() + 1)
     is_submit_disabled(TRUE)
+    is_submit_clicked(TRUE)
   })
   
   observeEvent(input$learnMore, {
     purrr::walk(consts$links, ~open_in_new_tab(.x))
+    is_submit_clicked(FALSE)
   })
   
   open_in_new_tab <- function(url) {
@@ -204,12 +207,14 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
     session$userData$isBiteModalOpen(FALSE)
     session$userData$isSuccessModalOpen(FALSE)
     session$userData$isStartModalOpen(TRUE)
+    is_submit_clicked(FALSE)
   })
   
   observeEvent(input$playAgain, {
     session$userData$isBiteModalOpen(FALSE)
     session$userData$isSuccessModalOpen(FALSE)
-    ObjectsManager$place_objects(session$userData$level)
+    ObjectsManager$place_objects(session$userData$level())
+    is_submit_clicked(FALSE)
   })
   
 }

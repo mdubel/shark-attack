@@ -15,12 +15,14 @@ server <- function(input, output, session) {
   session$userData$isStartModalOpen <- reactiveVal(TRUE)
   gameStart$init_server("gameStart", ObjectsManager, consts)
   
+  session$userData$level <- reactiveVal("")
+  
   observeEvent(input$level, {
     # To allow selecting the same values (e.g. same level, same move direction) in JS and react for them in Shiny input values are "reset" after each usage.
     req(input$level != "clean")
     
     session$userData$isStartModalOpen(FALSE)
-    session$userData$level <- input$level
+    session$userData$level(input$level)
     ObjectsManager$place_objects(input$level)
     
     shinyjs::runjs("cleanObject('level');")
