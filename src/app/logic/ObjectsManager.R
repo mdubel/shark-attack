@@ -1,7 +1,6 @@
 import("R6")
 import("utils")
 import("purrr")
-import("shiny")
 import("shinyjs")
 import("glue")
 
@@ -98,7 +97,7 @@ ObjectsManager <- R6::R6Class(
       }
     },
     
-    start_moving = function(countdown_time = 4) {
+    start_moving = function(countdown_time = 3) {
       timeout_time <- (countdown_time + 1) * 1000
       shinyjs::runjs(glue(
         "runCountdown({countdown_time});

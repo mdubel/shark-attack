@@ -2,55 +2,94 @@ import("shiny")
 import("shinyjs")
 import("shiny.fluent")
 import("glue")
+import("purrr")
+import("googlesheets4")
 
 export("ui", "init_server")
 
 ui <- function(id) {
   ns <- NS(id)
-  tagList(
-    reactOutput(ns("biteModal")),
-    reactOutput(ns("successModal"))
-  )
+  reactOutput(ns("endModal"))
 }
 
-init_server <- function(id, ObjectsManager, consts) {
-  callModule(server, id, ObjectsManager, consts)
+init_server <- function(id, ObjectsManager, LeaderboardManager, consts) {
+  callModule(server, id, ObjectsManager, LeaderboardManager, consts)
 }
 
-server <- function(input, output, session, ObjectsManager, consts) {
+server <- function(input, output, session, ObjectsManager, LeaderboardManager, consts) {
   ns <- session$ns
   
-  output$biteModal <- renderReact({
+  # MODAL ----
+  output$endModal <- renderReact({
+    is_success <- session$userData$isSuccessModalOpen()
+    is_failure <- session$userData$isBiteModalOpen()
+    
+    text <- ifelse(is_failure, consts$texts$gameOver, consts$texts$gameSuccess)
+    icon_name <- ifelse(is_failure, "failure", "success")
+    scores <- ObjectsManager$score_manager$get_scores(session$userData$level(), is_failure)
+    
     reactWidget(
       Modal(
         className = "modal",
-        isOpen = session$userData$isBiteModalOpen(), isBlocking = FALSE,
+        isOpen = is_success || is_failure,
+        isBlocking = FALSE,
         div(
-          class = "failure-grid",
-          build_text(consts$texts$gameOver),
-          build_icon("failure"),
+          class = "end-grid",
+          build_text(text),
+          build_scores_table(scores),
+          build_icon(icon_name, "modal-element--icon"),
+          build_leaderboard(leaderboard(), session$userData$level(), scores$current, ask = is_success || is_failure),
           build_buttons()
         )
       )
     )
   })
   
-  output$successModal <- renderReact({
-    reactWidget(
-      Modal(
-        className = "modal",
-        isOpen = session$userData$isSuccessModalOpen(), isBlocking = FALSE,
-        div(
-          class = "success-grid",
-          build_text(consts$texts$gameSuccess),
-          build_scores_table(ObjectsManager$score_manager$get_scores(session$userData$level)),
-          build_icon("success"),
-          build_buttons()
-        )
-      )
-    )
+  # LEADERBOARD ----
+  leaderboard_trigger <- reactiveVal(0)
+  is_submit_disabled <- reactiveVal(TRUE)
+  is_submit_clicked <- reactiveVal(FALSE)
+  
+  leaderboard <- reactive({
+    leaderboard_trigger()
+    LeaderboardManager$get_leaderboard(session$userData$level())
   })
   
+  output$leaderboardPartOne <- renderDataTable(
+    leaderboard()[1:5,],
+    options = list(
+      dom = "t",
+      searching = FALSE,
+      ordering = FALSE
+    )
+  )
+  output$leaderboardPartTwo <- renderDataTable(
+    leaderboard()[6:10,],
+    options = list(
+      dom = "t",
+      searching = FALSE,
+      ordering = FALSE
+    )
+  )
+  
+  observeEvent(is_submit_disabled(), {
+    if(is_submit_disabled()) {
+      shinyjs::addClass(id = "submit", class = "hidden")
+    } else {
+      shinyjs::removeClass(id = "submit", class = "hidden")
+    }
+  })
+  
+  observeEvent(input$nick, {
+    if(input$nick == "" || is_submit_clicked()) {
+      shinyjs::addClass(id = "submit", class = "hidden")
+      is_submit_disabled(TRUE)
+    } else {
+      is_submit_disabled(FALSE)
+    }
+  })
+  
+  # CONTENT ----
   build_scores_table <- function(scores_list) {
     div(
       class = "modal-element modal-element--scores",
@@ -90,8 +129,8 @@ server <- function(input, output, session, ObjectsManager, consts) {
     )
   }
   
-  build_icon <- function(type) {
-    div(div(img(src = glue("./assets/{type}.png"))), class = "modal-element modal-element--icon")
+  build_icon <- function(type, class = "") {
+    div(div(img(src = glue("./assets/{type}.png"))), class = paste("modal-element", class))
   }
   
   build_buttons <- function() {
@@ -109,28 +148,81 @@ server <- function(input, output, session, ObjectsManager, consts) {
         ShinyComponentWrapper(DefaultButton(ns("learnMore"), text = "Learn More")),
         class = "modal-element button-learn"
       ),
-      div(consts$texts$modalFooter, class = "buttons-footer")
+      div(uiOutput(ns("footer")), class = "buttons-footer")
     )
   }
   
-  open_in_new_tab <- function(url) {
-    shinyjs::runjs(glue("window.open('{url}', '_blank');"))
+  output$footer <- renderUI({
+    HTML(consts$texts$modalFooter)
+  })
+  
+  build_submit <- function(leaderboard, score) {
+    if(score == "X" || (length(leaderboard$score) == 10 && as.numeric(score) < min(leaderboard$score))) {
+      div(consts$texts$noHighScore)
+    } else {
+      div(
+        ShinyComponentWrapper(TextField(ns("nick"), label = "Save your highscore to leaderboard")),
+        ShinyComponentWrapper(PrimaryButton(ns("submit"), text = "Submit")),
+        class = "modal-element button-nick"
+      )
+    }
   }
+  
+  build_leaderboard <- function(leaderboard, level, score, ask = TRUE) {
+    if(ask) {
+      div(
+        class = "modal-element modal-element--leaderboard",
+        div(
+          class = "leaderboard-grid",
+          build_submit(leaderboard, score),
+          div(
+            p(glue("Overall leaderboard for {level} level:")),
+            build_icon(level, "image-small"),
+            dataTableOutput(ns("leaderboardPartOne")),
+            dataTableOutput(ns("leaderboardPartTwo")),
+            class = "modal-element table-leaderboard"
+          )
+        )
+      )
+    } else {
+      NULL
+    }
+  }
+  
+  
+  # BUTTONS ----
+  observeEvent(input$submit, {
+    req(input$nick != "")
+    LeaderboardManager$save_to_leaderboard(
+      input$nick,
+      session$userData$level(),
+      as.numeric(ObjectsManager$score_manager$get_scores(session$userData$level())$current)
+    )
+    leaderboard_trigger(leaderboard_trigger() + 1)
+    is_submit_disabled(TRUE)
+    is_submit_clicked(TRUE)
+  })
   
   observeEvent(input$learnMore, {
     purrr::walk(consts$links, ~open_in_new_tab(.x))
   })
   
+  open_in_new_tab <- function(url) {
+    shinyjs::runjs(glue("window.open('{url}', '_blank');"))
+  }
+  
   observeEvent(input$mainMenu, {
     session$userData$isBiteModalOpen(FALSE)
     session$userData$isSuccessModalOpen(FALSE)
     session$userData$isStartModalOpen(TRUE)
+    is_submit_clicked(FALSE)
   })
   
   observeEvent(input$playAgain, {
     session$userData$isBiteModalOpen(FALSE)
     session$userData$isSuccessModalOpen(FALSE)
-    ObjectsManager$place_objects(session$userData$level)
+    ObjectsManager$place_objects(session$userData$level())
+    is_submit_clicked(FALSE)
   })
   
 }

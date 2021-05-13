@@ -5,6 +5,7 @@ server <- function(input, output, session) {
   ScoreManager <- ScoreManager$new()
   TrashManager <- TrashManager$new()
   ObjectsManager <- ObjectsManager$new(ScoreManager, TrashManager)
+  LeaderboardManager <- LeaderboardManager$new()
   
   output$grid <- renderUI({
     GridManager$grid
@@ -14,12 +15,14 @@ server <- function(input, output, session) {
   session$userData$isStartModalOpen <- reactiveVal(TRUE)
   gameStart$init_server("gameStart", ObjectsManager, consts)
   
+  session$userData$level <- reactiveVal("")
+  
   observeEvent(input$level, {
     # To allow selecting the same values (e.g. same level, same move direction) in JS and react for them in Shiny input values are "reset" after each usage.
     req(input$level != "clean")
     
     session$userData$isStartModalOpen(FALSE)
-    session$userData$level <- input$level
+    session$userData$level(input$level)
     ObjectsManager$place_objects(input$level)
     
     shinyjs::runjs("cleanObject('level');")
@@ -84,5 +87,5 @@ server <- function(input, output, session) {
   session$userData$isBiteModalOpen <- reactiveVal(FALSE)
   session$userData$isSuccessModalOpen <- reactiveVal(FALSE)
   
-  gameOver$init_server("gameOver", ObjectsManager, consts)
+  gameOver$init_server("gameOver", ObjectsManager, LeaderboardManager, consts)
 }
