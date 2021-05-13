@@ -45,7 +45,10 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
     )
   })
   
+  # LEADERBOARD ----
+  leaderboard_trigger <- reactiveVal(0)
   leaderboard <- reactive({
+    leaderboard_trigger()
     LeaderboardManager$get_leaderboard(session$userData$level)
   })
   
@@ -172,6 +175,7 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
       session$userData$level,
       as.numeric(ObjectsManager$score_manager$get_scores(session$userData$level)$current)
     )
+    leaderboard_trigger(leaderboard_trigger() + 1)
   })
   
   observeEvent(input$learnMore, {
