@@ -47,6 +47,8 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
   
   # LEADERBOARD ----
   leaderboard_trigger <- reactiveVal(0)
+  is_submit_disabled <- reactiveVal(TRUE)
+  
   leaderboard <- reactive({
     leaderboard_trigger()
     LeaderboardManager$get_leaderboard(session$userData$level)
@@ -69,6 +71,17 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
     )
   )
   
+  output$submit_button <- renderUI({
+    ShinyComponentWrapper(PrimaryButton(ns("submit"), text = "Submit", disabled = is_submit_disabled()))
+  })
+  
+  observeEvent(input$nick, {
+    if(input$nick != "") {
+      is_submit_disabled(FALSE)
+    } else {
+      is_submit_disabled(TRUE)
+    }
+  })
   
   # CONTENT ----
   build_scores_table <- function(scores_list) {
@@ -139,7 +152,7 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
     } else {
       div(
         ShinyComponentWrapper(TextField(ns("nick"), label = "Save your highscore to leaderboard")),
-        ShinyComponentWrapper(PrimaryButton(ns("submit"), text = "Submit")),
+        uiOutput(ns("submit_button")),
         class = "modal-element button-nick"
       )
     }
@@ -155,8 +168,8 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
           div(
             p(glue("Overall leaderboard for {level} level:")),
             build_icon(level, "image-small"),
-            dataTableOutput(session$ns("leaderboardPartOne")),
-            dataTableOutput(session$ns("leaderboardPartTwo")),
+            dataTableOutput(ns("leaderboardPartOne")),
+            dataTableOutput(ns("leaderboardPartTwo")),
             class = "modal-element table-leaderboard"
           )
         )
@@ -176,6 +189,7 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
       as.numeric(ObjectsManager$score_manager$get_scores(session$userData$level)$current)
     )
     leaderboard_trigger(leaderboard_trigger() + 1)
+    is_submit_disabled(TRUE)
   })
   
   observeEvent(input$learnMore, {
