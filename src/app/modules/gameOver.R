@@ -147,7 +147,7 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
   }
   
   build_submit <- function(leaderboard, score) {
-    if(score == "X" || as.numeric(score) <= min(leaderboard$score)) {
+    if(score == "X" || (length(leaderboard$score) > 10 && as.numeric(score) <= min(leaderboard$score))) {
       div(consts$texts$noHighScore)
     } else {
       div(

@@ -19,7 +19,7 @@ LeaderboardManager <- R6::R6Class(
   public = list(
     get_leaderboard = function(level) {
       read_sheet(private$leaderboard_id) %>% 
-        dplyr::filter(level == level) %>% 
+        dplyr::filter(level == !!level) %>% 
         dplyr::arrange(desc(score)) %>% 
         dplyr::select(!level) %>% 
         head(10L) %>% 
