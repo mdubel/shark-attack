@@ -143,9 +143,13 @@ server <- function(input, output, session, ObjectsManager, LeaderboardManager, c
         ShinyComponentWrapper(DefaultButton(ns("learnMore"), text = "Learn More")),
         class = "modal-element button-learn"
       ),
-      div(consts$texts$modalFooter, class = "buttons-footer")
+      div(uiOutput(ns("footer")), class = "buttons-footer")
     )
   }
+  
+  output$footer <- renderUI({
+    HTML(consts$texts$modalFooter)
+  })
   
   build_submit <- function(leaderboard, score) {
     if(score == "X" || (length(leaderboard$score) > 10 && as.numeric(score) <= min(leaderboard$score))) {

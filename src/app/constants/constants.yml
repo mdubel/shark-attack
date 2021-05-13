@@ -9,7 +9,7 @@ default:
   texts:
     gameOver: "You've tried hard, the planet is grateful for your sacrifice. Let's hope your followers will do better."
     gameSuccess: "Congratulations! The ocean is now... a little bit cleaner. Still a lot of work to do!"
-    modalFooter: "Application created with the help of Appsilon's shiny.fluent package. Join our AI4GOOD initiatives!"
+    modalFooter: "Application created with the help of <a href='https://github.com/Appsilon/shiny.fluent' target='_blank'>shiny.fluent</a> package by Appsilon. Join our <a href='https://appsilon.com/ai-for-good/' target='_blank'>AI4GOOD</a> initiatives!"
     currentScore: "Your score this round:"
     highScore: "Your highscores so far:"
     noHighScore: "Sorry, you have not made it to leaderboard."
